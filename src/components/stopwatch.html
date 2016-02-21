@@ -1,0 +1,62 @@
+<link rel="import" href="../../src/components/stopwatch-lap.html">
+<link rel="import" href="../../dist/css-modules/stopwatch.module.html">
+<dom-module id="stopwatch-counter">
+    <template>
+        <style>
+            paper-card:not(.running):not(.opened) {
+                /*noinspection CssInvalidFunction*/
+                color: var(--secondary-text-color);
+            }
+
+            paper-card:not(.running):not(.opened) .card-actions {
+                /*noinspection CssInvalidFunction*/
+                border-color: var(--secondary-text-color);
+            }
+        </style>
+        <style include="stopwatch.module"></style>
+        <paper-card id="wrapper" class$="{{getStatus(run, meted, history)}}">
+            <div class="card-content">
+                <div class="value" title="[[asMinutes(value)]]">[[format(value)]]</div>
+                <div class="name">[[name]]</div>
+            </div>
+            <div class="card-actions">
+                <div class="buttons-group layout horizontal">
+                    <paper-button class="btn primary-button flex" on-click="toggle">
+                        <iron-icon class="icon play-icon" icon="av:play-arrow"></iron-icon>
+                        <iron-icon class="icon pause-icon" icon="av:pause"></iron-icon>
+                    </paper-button>
+                    <paper-button class="btn second-buttons stop-btn" on-click="stop">
+                        <iron-icon class="icon" icon="av:stop"></iron-icon>
+                    </paper-button>
+                    <paper-button class="btn second-buttons lap-btn" on-click="lap">
+                        <iron-icon class="icon" icon="flag"></iron-icon>
+                    </paper-button>
+                    <paper-button class="btn second-buttons" data-action="info" on-click="moreInfo">
+                        <iron-icon class="icon expand-icon" icon="expand-more"></iron-icon>
+                    </paper-button>
+                </div>
+            </div>
+            <iron-collapse class="info" id="moreInfo">
+                <paper-input label="Название счётчика" value="{{name}}" on-change="onNameChange"></paper-input>
+
+                <template is="dom-repeat" items="[[getGroupedHistory(history.*)]]">
+                    [[item.day]]<br>
+                    <ol>
+                        <template is="dom-repeat" items="[[item.history]]">
+                            <li>{{item}}</li>
+                        </template>
+                    </ol>
+                </template>
+            </iron-collapse>
+            <div class="laps-wrapper">
+                <div class="laps layout vertical end" id="laps">
+                    <template is="dom-repeat" items="{{laps}}">
+                        <stopwatch-lap value="{{item.value}}" shift="{{item.shift}}"></stopwatch-lap>
+                    </template>
+                </div>
+            </div>
+            <paper-icon-button icon="delete" class="btn-delete" on-click="delete"></paper-icon-button>
+        </paper-card>
+    </template>
+    <script src="../../dist/js-modules/stopwatch.module.js"></script>
+</dom-module>

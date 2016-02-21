@@ -1,0 +1,19 @@
+<link rel="import" href="../../dist/css-modules/summary.module.html">
+<dom-module id="stopwatch-summary">
+    <template>
+        <style>
+            .wrapper {
+                /*noinspection CssInvalidFunction*/
+                color: var(--secondary-text-color);
+            }
+        </style>
+        <style include="summary.module"></style>
+        <div class="wrapper">
+            <div class="counter today">{{getTime(today)}}</div>
+            <div class="label">Сегодня:</div>
+            <div class="counter yesterday">{{getTime(yesterday)}}</div>
+            <div class="label">Вчера:</div>
+        </div>
+    </template>
+    <script src="../../dist/js-modules/summary.module.js"></script>
+</dom-module>

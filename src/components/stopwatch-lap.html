@@ -1,0 +1,15 @@
+<link rel="import" href="../../dist/css-modules/stopwatch-lap.module.html">
+<dom-module id="stopwatch-lap">
+    <template>
+        <style></style>
+        <style include="stopwatch-lap.module"></style>
+        <div class="lap">
+            <template is="dom-if" if="{{shift}}">
+                <span class="shift">+ [[humanize(shift)]]</span>
+            </template>
+            <iron-icon icon="flag"></iron-icon>
+            <span>[[format(value)]]</span>
+        </div>
+    </template>
+    <script src="../../dist/js-modules/stopwatch-lap.module.js"></script>
+</dom-module>

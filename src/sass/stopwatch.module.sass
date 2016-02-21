@@ -1,0 +1,77 @@
+@import "../../bower_components/d-style/src/sass/variables"
+
+.card-content
+  .value
+    font-size: $font-size-h1
+    line-height: 1
+    min-width: 300px
+    text-align: center
+  .name
+    text-align: right
+    min-height: $line-height-computed
+    margin-bottom: -$line-height-computed
+
+.btn
+  display: block
+
+.icon
+  height: 36px
+  width: 36px
+
+.info
+  overflow: hidden
+  padding: 0 $grid-gutter-width / 2
+
+.btn-delete
+  position: absolute
+  top: 60px
+  right: 5px
+  width: 35px
+  height: 35px
+  visibility: hidden
+  opacity: 0
+  transition: top 300ms ease-out, opacity 300ms ease-out
+
+.expand-icon
+  transition: transform 300ms
+
+.running
+  .play-icon
+    display: none
+
+paper-card
+  display: block
+  transition: color 100ms
+
+  &:not(.running)
+    .pause-icon
+      display: none
+  &.new
+    .second-buttons
+      display: none
+  &.ready
+    .stop-btn, .lap-btn
+      display: none
+
+  &.opened
+    .btn-delete
+      visibility: visible
+      top: 5px
+      opacity: 1
+    .expand-icon
+      transform: rotateZ(180deg)
+  .card-actions
+    transition: border-color 100ms
+
+.laps-wrapper
+  overflow: hidden
+
+stopwatch-lap
+  display: block
+  position: relative
+  width: 152px
+  .shift
+    position: absolute
+    transform: translateX(-100%) translateY(15px)
+  &:nth-last-of-type(1)
+    margin-bottom: $grid-gutter-width / 2

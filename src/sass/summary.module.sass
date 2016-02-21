@@ -1,0 +1,25 @@
+@import "../../bower_components/d-style/src/sass/variables"
+
+.wrapper
+  overflow: hidden
+
+.label
+  position: relative
+
+.counter
+  padding-top: $line-height-computed
+  text-align: right
+  &:empty
+    display: none
+    + .label
+      display: none
+
+  &.today
+    font-size: $font-size-h1 * 0.9
+    + .label
+      top: - ($font-size-h1 * 0.9 * $line-height-base + $line-height-computed)
+
+  &.yesterday
+    font-size: $font-size-h1 * 0.8
+    + .label
+      top: - ($font-size-h1 * 0.8 * $line-height-base + $line-height-computed)
