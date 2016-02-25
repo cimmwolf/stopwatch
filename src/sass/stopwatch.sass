@@ -1,15 +1,19 @@
 @import "../../bower_components/d-style/src/sass/dstyle.sass"
 
+stopwatch-app
+  justify-content: center
+
 stopwatch-counter
   display: block
-  max-width: 360px
-  margin-left: auto
-  margin-right: auto
+  width: 320px
   position: relative
-  margin-top: $grid-gutter-width / 2
+  margin: $grid-gutter-width / 2 0 0
+  @media(min-width: 400px)
+    margin: $grid-gutter-width / 2 auto 0
+  @media(min-width: $screen-sm-min)
+    width: 352px
+    margin: $grid-gutter-width / 2 $grid-gutter-width / 2 0
 
 stopwatch-summary
   display: block
-  position: absolute
-  top: $grid-gutter-width / 2
-  right: $grid-gutter-width / 2
+  padding-top: $grid-gutter-width / 2

@@ -3,7 +3,8 @@ app = window.app or (window.app = {})
 app.AppComponent = ng.core.Component(
   selector: 'stopwatch-app'
   template: '
-    <stopwatch-counter *ngFor="#item of items; #i = index"
+    <div class="layout horizontal center-justified wrap flex">
+      <stopwatch-counter *ngFor="#item of items; #i = index"
         [beginning]="item.beginning" (beginning-changed)="item.beginning = $event.detail.value"
         [run]="item.run" (run-changed)="item.run = $event.detail.value"
         [name]="item.name" (name-changed)="item.name = $event.detail.value"
@@ -13,13 +14,15 @@ app.AppComponent = ng.core.Component(
         (delete)="delete(i)"
         (changed)="save()"
         (begin)="addItem()"
-     ></stopwatch-counter>
-
+        (end)="pushHistory($event)"
+      ></stopwatch-counter>
+    </div>
     <stopwatch-summary today="{{getSummaryToday()}}" yesterday="{{getSummaryYesterday()}}"></stopwatch-summary>
   '
 ).Class(
   constructor: ->
     @items = []
+    @history = []
 
     @addItem = ->
       @items.push prepare({})
@@ -42,11 +45,17 @@ app.AppComponent = ng.core.Component(
       console.log 'Local storage is unsupported or unavailable'
 
     if storage?
-      storedData = storage.getItem('stopwatches')
+      if (storedData = storage.getItem 'stopwatches')?
+        storedData = storedData.replace(/\{"time":(\d+),"event":"start"\}/g, '["bgn",$1]').replace(/\{"time":(\d+),"event":"(stop|pause)"\}/g, '["end",$1]')
+        storedData = JSON.parse storedData
 
-    if storedData?
-      storedData = JSON.parse(storedData)
+      if !Array.isArray storedData
+        storedData = []
+
       @items = (prepare item for item in storedData)
+
+      if !Array.isArray(@history = JSON.parse storage.getItem 'history')
+          @history = []
 
     @addItem()
 
@@ -59,6 +68,13 @@ app.AppComponent = ng.core.Component(
 
         storage.setItem 'stopwatches', JSON.stringify(toSave)
 
+    @pushHistory = (e) =>
+      if e.detail.bgn? and e.detail.end?
+        bgn = Math.round e.detail.bgn / 60000
+        end = Math.round e.detail.end / 60000
+        @history.push [bgn, end]
+        storage.setItem 'history', JSON.stringify(@history)
+
     @delete = (index) =>
       @items.splice(index, 1)
       @save()
@@ -68,15 +84,15 @@ app.AppComponent = ng.core.Component(
       today = moment().startOf('day')
       for stopwatch in @items
         for item, index in stopwatch.history
-          if moment(item.time).isBefore today
+          if moment(item[1]).isBefore today
             continue
           if start == 0
-            if item.event isnt 'start'
+            if item[0] isnt 'bgn'
               continue
-            start = item.time
+            start = item[1]
 
-          if end == 0 and (item.event is 'pause' or item.event is 'stop')
-            end = item.time
+          if end == 0 and item[0] is 'end'
+            end = item[1]
 
           if end == 0 and index == stopwatch.history.length - 1
             end = Date.now()
@@ -92,15 +108,15 @@ app.AppComponent = ng.core.Component(
       yesterdayEnd = moment().subtract(1, 'days').endOf('day')
       for stopwatch in @items
         for item, index in stopwatch.history
-          if moment(item.time).isBefore(yesterdayStart) or moment(item.time).isAfter(yesterdayEnd)
+          if moment(item[1]).isBefore(yesterdayStart) or moment(item[1]).isAfter(yesterdayEnd)
             continue
           if start == 0
-            if item.event isnt 'start'
+            if item[0] isnt 'bgn'
               continue
-            start = item.time
+            start = item[1]
 
-          if end == 0 and (item.event is 'pause' or item.event is 'stop')
-            end = item.time
+          if end == 0 and item[0] is 'end'
+            end = item[1]
 
           if end == 0 and index == stopwatch.history.length - 1
             end = Date.now()

@@ -17,13 +17,16 @@ Polymer
       type: Number
       value: Date.now()
     laps: Array
-    animationConfig:
-      value: ->
-        name: 'slide-from-bottom-animation',
-        node: this
 
+  ready: ->
+    this.isNew = true
   attached: ->
-    @.playAnimation()
+    if this.isNew
+      aConf = y: '100%'
+      if this.previousSibling? and this.offsetTop == this.previousSibling.offsetTop
+        aConf.marginRight = -1 * this.offsetWidth + 'px'
+      TweenLite.from this, 0.4, aConf
+      this.isNew = false
     @timer()
 
   format: (duration)->
@@ -92,12 +95,12 @@ Polymer
     end = 0
     gHistory = [{day: 'Сегодня', history: []}, {day: 'Вчера', history: []}, {day: 'Ранее', history: []}]
     for point, index in history
-      if start == 0 and point.event == 'start'
-        start = moment point.time
+      if start == 0 and point[0] == 'bgn'
+        start = moment point[1]
         continue
 
-      if end == 0 and (point.event == 'stop' or point.event == 'pause')
-        end = moment point.time
+      if start != 0 and end == 0 and point[0] == 'end'
+        end = moment point[1]
 
       if start != 0 and end != 0
         group = 1
@@ -107,7 +110,10 @@ Polymer
           group = 2
 
         duration = end.diff start
-        gHistory[group].history.unshift start.format('HH:mm') + ' -> ' + end.format('HH:mm') + ' (' + @humanize(duration) + ')'
+        row = start.format('HH:mm') + ' -> ' + end.format('HH:mm') + ' (' + @humanize(duration) + ')'
+        if group > 1
+          row = start.format('D MMM') + ' ' + start.format('HH:mm') + ' -> ' + end.format('D MMM') + ' ' +  end.format('HH:mm') + ' (' + @humanize(duration) + ')'
+        gHistory[group].history.unshift row
         start = end = 0
 
     gHistory = gHistory.filter (item) ->
@@ -128,27 +134,34 @@ Polymer
     this.$.wrapper.toggleClass('opened', moreInfo.opened)
 
   toggle: ->
+    now = Date.now()
     if !@run
       if @beginning == false
         @.fire 'begin'
 
-      @beginning = Date.now()
-      @.push 'history', time: Date.now(), event: 'start'
+      @beginning = now
+      @.push 'history', ['bgn', now]
       @run = true
 
       @timer()
     else
       @run = false
-      @meted += Date.now() - @beginning
+      @meted += now - @beginning
 
-      @.push 'history', time: Date.now(), event: 'pause'
+      @.push 'history', ['end', now]
+      @.fire 'end', bgn: @beginning, end: now
+
     @.fire 'changed'
 
   stop: ->
-    @run = false
+    now = Date.now()
+    if @run
+      @.fire 'end', bgn: @beginning, end: now
+      @run = false
     @meted = 0
-    @.push 'history', time: Date.now(), event: 'stop'
+    @.push 'history', ['end', now]
     @.splice 'laps', 0, 9999
+    @.fire 'changed'
 
   delete: ->
     this.fire 'delete'
@@ -176,4 +189,4 @@ Polymer
     return '' if n < 1
 
     forms = ['минута', 'минуты', 'минут']
-    n + ' ' +forms[if n % 10 == 1 and n % 100 != 11 then 0 else if n % 10 >= 2 and n % 10 <= 4 and (n % 100 < 10 or n % 100 >= 20) then 1 else 2]
+    n + ' ' + forms[if n % 10 == 1 and n % 100 != 11 then 0 else if n % 10 >= 2 and n % 10 <= 4 and (n % 100 < 10 or n % 100 >= 20) then 1 else 2]

@@ -4,10 +4,8 @@
   .value
     font-size: $font-size-h1
     line-height: 1
-    min-width: 300px
     text-align: center
   .name
-    text-align: right
     min-height: $line-height-computed
     margin-bottom: -$line-height-computed
 
@@ -62,6 +60,9 @@ paper-card
       transform: rotateZ(180deg)
   .card-actions
     transition: border-color 100ms
+    @media(max-width: $screen-xs-max)
+      padding-left: 0
+      padding-right: 0
 
 .laps-wrapper
   overflow: hidden
@@ -75,3 +76,6 @@ stopwatch-lap
     transform: translateX(-100%) translateY(15px)
   &:nth-last-of-type(1)
     margin-bottom: $grid-gutter-width / 2
+
+.history-list
+  list-style: none

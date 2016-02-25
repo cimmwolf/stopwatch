@@ -1,3 +1,5 @@
+<link rel="import" href="stopwatch-icons.html">
+
 <link rel="import" href="../../src/components/stopwatch-lap.html">
 <link rel="import" href="../../dist/css-modules/stopwatch.module.html">
 <dom-module id="stopwatch-counter">
@@ -22,17 +24,17 @@
             <div class="card-actions">
                 <div class="buttons-group layout horizontal">
                     <paper-button class="btn primary-button flex" on-click="toggle">
-                        <iron-icon class="icon play-icon" icon="av:play-arrow"></iron-icon>
-                        <iron-icon class="icon pause-icon" icon="av:pause"></iron-icon>
+                        <iron-icon class="icon play-icon" icon="stopwatch:play-arrow"></iron-icon>
+                        <iron-icon class="icon pause-icon" icon="stopwatch:pause"></iron-icon>
                     </paper-button>
                     <paper-button class="btn second-buttons stop-btn" on-click="stop">
-                        <iron-icon class="icon" icon="av:stop"></iron-icon>
+                        <iron-icon class="icon" icon="stopwatch:stop"></iron-icon>
                     </paper-button>
                     <paper-button class="btn second-buttons lap-btn" on-click="lap">
-                        <iron-icon class="icon" icon="flag"></iron-icon>
+                        <iron-icon class="icon" icon="stopwatch:flag"></iron-icon>
                     </paper-button>
                     <paper-button class="btn second-buttons" data-action="info" on-click="moreInfo">
-                        <iron-icon class="icon expand-icon" icon="expand-more"></iron-icon>
+                        <iron-icon class="icon expand-icon" icon="stopwatch:expand-more"></iron-icon>
                     </paper-button>
                 </div>
             </div>
@@ -41,7 +43,7 @@
 
                 <template is="dom-repeat" items="[[getGroupedHistory(history.*)]]">
                     [[item.day]]<br>
-                    <ol>
+                    <ol class="history-list">
                         <template is="dom-repeat" items="[[item.history]]">
                             <li>{{item}}</li>
                         </template>
@@ -55,7 +57,7 @@
                     </template>
                 </div>
             </div>
-            <paper-icon-button icon="delete" class="btn-delete" on-click="delete"></paper-icon-button>
+            <paper-icon-button icon="stopwatch:delete" class="btn-delete" on-click="delete"></paper-icon-button>
         </paper-card>
     </template>
     <script src="../../dist/js-modules/stopwatch.module.js"></script>
