@@ -55,7 +55,7 @@ app.AppComponent = ng.core.Component(
       @items = (prepare item for item in storedData)
 
       if !Array.isArray(@history = JSON.parse storage.getItem 'history')
-          @history = []
+        @history = []
 
     @addItem()
 
@@ -82,9 +82,12 @@ app.AppComponent = ng.core.Component(
     @getSummaryToday = =>
       summary = start = end = 0
       today = moment().startOf('day')
+      yesterday = moment().subtract(1, 'days').startOf('day')
       for stopwatch in @items
         for item, index in stopwatch.history
           if moment(item[1]).isBefore today
+            if item[0] is 'bgn' and moment(item[1]).isSameOrAfter(yesterday) and stopwatch.history[index + 1]? and moment(stopwatch.history[index + 1][1]).isSameOrAfter today
+              start = today.valueOf()
             continue
           if start == 0
             if item[0] isnt 'bgn'
@@ -108,8 +111,15 @@ app.AppComponent = ng.core.Component(
       yesterdayEnd = moment().subtract(1, 'days').endOf('day')
       for stopwatch in @items
         for item, index in stopwatch.history
-          if moment(item[1]).isBefore(yesterdayStart) or moment(item[1]).isAfter(yesterdayEnd)
+          if moment(item[1]).isBefore(yesterdayStart)
+            if item[0] is 'bgn' and stopwatch.history[index + 1]? and moment(stopwatch.history[index + 1][1]).isBetween(yesterdayStart, yesterdayEnd, null, '[]')
+              start = yesterdayStart.valueOf()
             continue
+          if moment(item[1]).isAfter(yesterdayEnd)
+            if start isnt 0
+              end = yesterdayEnd.valueOf()
+            else
+              continue
           if start == 0
             if item[0] isnt 'bgn'
               continue
