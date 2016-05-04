@@ -27,7 +27,7 @@
     "bootstrap-sass": "^3.3.6",
     "neon-animation": "PolymerElements/neon-animation#^1.1.0",
     "gsap": "^1.18.2",
-    "d-style": "^0.0.3"
+    "d-style": "~0.0.3"
   },
   "dependencies": {}
 }

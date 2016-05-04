@@ -8,36 +8,50 @@ var imagemin = require('gulp-imagemin');
 var newer = require('gulp-newer');
 var vulcanize = require('gulp-vulcanize');
 var concat = require('gulp-concat');
-var addsrc = require('gulp-add-src');
 var version = require('gulp-version-append');
 var cssnano = require('gulp-cssnano');
 var uglify = require('gulp-uglify');
 var polyclean = require('polyclean');
+var htmlmin = require('gulp-htmlmin');
+var cache = require('gulp-cached');
 
-gulp.task('default', ['scripts', 'css', 'images', 'vulcanize'], function () {
-    gulp.src('app/*.js')
-        .pipe(uglify())
-        .pipe(gulp.dest('app'));
-    gulp.src('dist/css/*.css')
-        .pipe(cssnano())
-        .pipe(gulp.dest('dist/css'));
-    gulp.src('index.html')
+gulp.task('default', ['scripts', 'css', 'components', 'images'], function () {
+    gulp.src('app.html')
         .pipe(version(['js', 'css'], {appendType: "guid"}))
-        .pipe(gulp.dest('./'))
+        .pipe(polyclean.cleanCss())
+        .pipe(polyclean.leftAlignJs())
+        .pipe(polyclean.uglifyJs())
+        .pipe(htmlmin({removeComments: true}))
+        .pipe(concat('index.html'))
+        .pipe(gulp.dest('./'));
+    return gulp.src('bower_components/**/*.html')
+        .pipe(polyclean.cleanCss())
+        .pipe(polyclean.leftAlignJs())
+        .pipe(polyclean.uglifyJs())
+        .pipe(htmlmin({removeComments: true}))
+        .pipe(gulp.dest('bower_components'));
 });
 
-gulp.task('scripts', function () {
+gulp.task('scripts', ['coffee'], function () {
+    return gulp.src([
+            'app/*.js',
+            'node_modules/reflect-metadata/Reflect.js',
+            'node_modules/@angular/core/core.umd.js',
+            'node_modules/@angular/common/common.umd.js',
+            'node_modules/@angular/compiler/compiler.umd.js',
+            'node_modules/@angular/platform-browser/platform-browser.umd.js',
+            'node_modules/@angular/platform-browser-dynamic/platform-browser-dynamic.umd.js',
+            'bower_components/moment/locale/ru.js'
+        ])
+        .pipe(cache('uglifying'))
+        .pipe(uglify())
+        .pipe(gulp.dest('dist/js'));
+});
+
+gulp.task('coffee', function () {
     return gulp.src(['src/coffee/app.component.coffee', 'src/coffee/main.coffee'])
         .pipe(concat('main.js'))
         .pipe(coffee())
-        .pipe(addsrc.prepend('bower_components/gsap/src/uncompressed/plugins/CSSPlugin.js'))
-        .pipe(addsrc.prepend('bower_components/gsap/src/uncompressed/TweenLite.js'))
-        .pipe(addsrc.prepend('bower_components/moment/locale/ru.js'))
-        .pipe(addsrc.prepend('bower_components/moment/moment.js'))
-        .pipe(addsrc.prepend('node_modules/angular2/bundles/angular2-all.umd.js'))
-        .pipe(addsrc.prepend('node_modules/rxjs/bundles/Rx.umd.js'))
-        .pipe(addsrc.prepend('node_modules/angular2/bundles/angular2-polyfills.js'))
-        .pipe(concat('main.js'))
         .pipe(gulp.dest('app'));
 });
 
@@ -47,7 +61,13 @@ gulp.task('js-modules', function () {
         .pipe(gulp.dest('dist/js-modules'));
 });
 
-gulp.task('css', function () {
+gulp.task('css',['sass'], function () {
+    gulp.src('dist/css/*.css')
+        .pipe(cssnano())
+        .pipe(gulp.dest('dist/css'));
+});
+
+gulp.task('sass', function () {
     return gulp.src(['src/sass/*.sass', '!src/sass/*.module.sass'])
         .pipe(sass({includePaths: ['bower_components/bootstrap-sass/assets/stylesheets']}).on('error', sass.logError))
         .pipe(autoprefixer({
@@ -78,26 +98,14 @@ gulp.task('images', function () {
         .pipe(gulp.dest('dist/img'));
 });
 
-gulp.task('web-components', ['style-modules', 'js-modules'], function () {
+gulp.task('components', ['style-modules', 'js-modules'], function () {
     return gulp.src('src/components/*')
-        .pipe(vulcanize({
-            inlineScripts: true,
-            inlineCss: true
-        }))
-        .pipe(gulp.dest('dist/components'));
-});
-
-gulp.task('vulcanize', ['js-modules', 'style-modules'], function () {
-    return gulp.src('app.html')
         .pipe(vulcanize({
             inlineScripts: true,
             inlineCss: true,
             stripComments: true,
-            excludes: ['dist/css/', 'app/']
+            excludes: ['bower_components/'],
+            stripExcludes: false
         }))
-        .pipe(polyclean.cleanCss())
-        .pipe(polyclean.leftAlignJs())
-        .pipe(polyclean.uglifyJs())
-        .pipe(concat('index.html'))
-        .pipe(gulp.dest('./'));
+        .pipe(gulp.dest('dist/components'));
 });

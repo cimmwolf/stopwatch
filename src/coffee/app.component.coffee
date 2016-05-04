@@ -4,7 +4,7 @@ app.AppComponent = ng.core.Component(
   selector: 'stopwatch-app'
   template: '
     <div class="layout horizontal center-justified wrap flex">
-      <stopwatch-counter *ngFor="#item of items; #i = index"
+      <stopwatch-counter *ngFor="let item of items; let i = index"
         [beginning]="item.beginning" (beginning-changed)="item.beginning = $event.detail.value"
         [run]="item.run" (run-changed)="item.run = $event.detail.value"
         [name]="item.name" (name-changed)="item.name = $event.detail.value"

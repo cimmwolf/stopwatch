@@ -11,17 +11,12 @@
 
     <link rel="import" href="bower_components/paper-styles/paper-styles.html">
     <link rel="import" href="bower_components/d-style/dstyle.module.html">
+    <link rel="import" href="bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 
-    <link rel="import" href="bower_components/iron-flex-layout/classes/iron-flex-layout.html">
-    <link rel="import" href="bower_components/paper-card/paper-card.html">
-    <link rel="import" href="bower_components/paper-input/paper-input.html">
-    <link rel="import" href="bower_components/paper-button/paper-button.html">
-    <link rel="import" href="bower_components/paper-icon-button/paper-icon-button.html">
-    <link rel="import" href="bower_components/iron-collapse/iron-collapse.html">
-    <link rel="import" href="bower_components/neon-animation/neon-animation-runner-behavior.html">
-
-    <link rel="import" href="src/components/stopwatch.html">
-    <link rel="import" href="src/components/summary.html">
+    <link rel="import" href="dist/components/stopwatch-icons.html">
+    <link rel="import" href="dist/components/stopwatch-lap.html">
+    <link rel="import" href="dist/components/stopwatch.html">
+    <link rel="import" href="dist/components/summary.html">
 
     <link href="dist/css/stopwatch.css?v=@version@" rel="stylesheet" type="text/css">
 
@@ -29,6 +24,20 @@
     <!-- IE required polyfill -->
     <script src="node_modules/es6-shim/es6-shim.min.js"></script>
 
+    <script src="node_modules/zone.js/dist/zone.min.js"></script>
+    <script src="dist/js/Reflect.js"></script>
+
+    <script src="node_modules/rxjs/bundles/Rx.umd.min.js"></script>
+    <script src="dist/js/core.umd.js"></script>
+    <script src="dist/js/common.umd.js"></script>
+    <script src="dist/js/compiler.umd.js"></script>
+    <script src="dist/js/platform-browser.umd.js"></script>
+    <script src="dist/js/platform-browser-dynamic.umd.js"></script>
+
+    <script src="bower_components/moment/min/moment.min.js"></script>
+    <script src="dist/js/ru.js"></script>
+    <script src="bower_components/gsap/src/minified/TweenLite.min.js"></script>
+    <script src="bower_components/gsap/src/minified/plugins/CSSPlugin.min.js"></script>
     <script src='app/main.js?v=@version@'></script>
 </head>
 <body>
