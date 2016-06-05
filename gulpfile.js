@@ -74,7 +74,7 @@ gulp.task('sass', function () {
         .pipe(gulp.dest('dist/css'));
 });
 
-gulp.task('components', ['style-modules', 'js-modules'], function () {
+gulp.task('components', ['style-modules', 'js-modules', 'scripts'], function () {
     return gulp.src('src/components/*')
         .pipe(vulcanize({
             inlineScripts: true,
