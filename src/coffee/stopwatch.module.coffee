@@ -157,9 +157,9 @@ Polymer
     now = Date.now()
     if @run
       @.fire 'end', bgn: @beginning, end: now
+      @.push 'history', ['end', now]
       @run = false
     @meted = 0
-    @.push 'history', ['end', now]
     @.splice 'laps', 0, 9999
     @.fire 'changed'
 

@@ -46,7 +46,7 @@ app.AppComponent = ng.core.Component(
 
     if storage?
       if (storedData = storage.getItem 'stopwatches')?
-        storedData = storedData.replace(/\{"time":(\d+),"event":"start"\}/g, '["bgn",$1]').replace(/\{"time":(\d+),"event":"(stop|pause)"\}/g, '["end",$1]')
+        storedData = storedData.replace(/(\["end",(\d+)\]),\["end",(\d+)\]/g, '$1')
         storedData = JSON.parse storedData
 
       if !Array.isArray storedData
