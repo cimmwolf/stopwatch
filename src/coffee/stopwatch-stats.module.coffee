@@ -1,18 +1,24 @@
 Polymer
   is: 'stopwatch-stats'
-
+  behaviors: [MyBehaviors.dateBehavior]
   properties:
     history: Array
     data:
       type: Object
-      computed: 'prepareData(history)'
     timeRange:
       type: String
+    dateFormat:
+      type: String
+      value: 'D MMM'
+    selectedDay: 
+      type: String
+      value: ''
 
   observers: [
-    'displayData(data, timeRange)'
-  ],
-
+    'displayData(data.*, timeRange)'
+    'historyChanged(history.*)'
+  ]
+  
   ready: ->
     @.$.googleChart.options =
       title: 'Статистика таймеров'
@@ -21,6 +27,9 @@ Polymer
       {label: 'Часы', type: 'number'}
     ]
 
+  historyChanged: () ->
+    @.set 'data', @.prepareData(@.history)
+    
   displayData: ->
     keys = Object.keys(@.data)
     keys.sort()
@@ -33,10 +42,10 @@ Polymer
       if day.isAfter start
         duration = moment.duration(@.data[day.valueOf()])
         rows.push [
-          day.format('D MMM')
+          day.format(@.dateFormat)
           {
             v: duration.asHours()
-            f: duration.humanize()
+            f: @.humanize duration, 'meaning'
           }
         ]
       unless day.add(1, 'd').valueOf() <= today
@@ -44,12 +53,15 @@ Polymer
     @.$.googleChart.rows = rows
 
   prepareData: (history)->
+    if history[0][0]?
+      return
+
     start = 0
     end = 0
     parsedHistory = {}
     for point in history
-      start = moment(point[0] * 60000)
-      end = moment(point[1] * 60000)
+      start = moment(point.s * 60000)
+      end = moment(point.e * 60000)
       startDay = start.clone().startOf('day').valueOf()
       endDay = end.clone().startOf('day').valueOf()
       if !parsedHistory[startDay]?
@@ -67,3 +79,23 @@ Polymer
     @.history = []
   defaultTimeRange: ->
     @.timeRange = 'month'
+
+  select: (e, detail)->
+    date = moment @.$.googleChart.rows[detail.selection[0].row], @.dateFormat
+    @.selectedDay = date.format @dateFormat
+    @.$.historySliders.render()
+
+  checkHistory: () ->
+    if @history[0][0]?
+      newHistory = []
+      for point in @history
+        newHistory.push s: point[0], e: point[1]
+      @.set 'history', newHistory
+
+  filterSliders: (selectedDay)->
+    dateFormat = @dateFormat
+    return (item) ->
+      if selectedDay?
+        moment(selectedDay, dateFormat).isSame(moment(item.s * 60000), 'day')
+      else
+        false

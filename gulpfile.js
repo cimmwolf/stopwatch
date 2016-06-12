@@ -88,12 +88,14 @@ gulp.task('components', ['style-modules', 'js-modules', 'scripts'], function () 
 
 gulp.task('js-modules', function () {
     return gulp.src('src/coffee/*.module.coffee')
+        .pipe(cache('jsmod'))
         .pipe(coffee())
         .pipe(gulp.dest('dist/js-modules'));
 });
 
 gulp.task('style-modules', function () {
     return gulp.src('src/sass/*.module.sass')
+        .pipe(cache('cssmod'))
         .pipe(sass().on('error', sass.logError))
         .pipe(stylemod({
             filename: function (file) {

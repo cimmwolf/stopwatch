@@ -1,9 +1,9 @@
-<link rel="import" href="../../dist/components/moment.html">
+<link rel="import" href="../../dist/components/date-behavior.html">
 <link rel="import" href="../../bower_components/google-chart/google-chart.html">
 <link rel="import" href="../../bower_components/iron-localstorage/iron-localstorage.html">
 <link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html">
-<link rel="import" href="../../bower_components/paper-radio-button">
-
+<link rel="import" href="../../bower_components/paper-radio-button/paper-radio-button.html">
+<link rel="import" href="../../dist/components/history-slider.html">
 
 <link rel="import" href="../../dist/css-modules/stopwatch-stats.module.html">
 <dom-module id="stopwatch-stats">
@@ -13,8 +13,11 @@
             }
         </style>
         <style include="stopwatch-stats.module"></style>
-        <iron-localstorage name="history" value="{{history}}" on-iron-localstorage-load-empty="defaultHistory"></iron-localstorage>
-        <iron-localstorage name="statsTimeRange" value="{{timeRange}}" on-iron-localstorage-load-empty="defaultTimeRange"></iron-localstorage>
+        <iron-localstorage name="history" value="{{history}}"
+                           on-iron-localstorage-load="checkHistory"
+                           on-iron-localstorage-load-empty="defaultHistory"></iron-localstorage>
+        <iron-localstorage name="statsTimeRange" value="{{timeRange}}"
+                           on-iron-localstorage-load-empty="defaultTimeRange"></iron-localstorage>
 
         <div class="text-right">
             <label id="timeRangeLabel">Показать за:</label>
@@ -25,8 +28,12 @@
                 <paper-radio-button name="year">год</paper-radio-button>
             </paper-radio-group>
         </div>
-        <google-chart id="googleChart" type="column" style="width: 100%">
-        </google-chart>
+        <google-chart id="googleChart" type="column" on-google-chart-select="select" style="width: 100%"></google-chart>
+
+        [[selectedDay]]<br>
+        <template id="historySliders" is="dom-repeat" items="{{history}}" filter="{{filterSliders(selectedDay)}}">
+            <history-slider start="[[item.s]]" end="{{item.e}}"></history-slider>
+        </template>
     </template>
     <script src="../../dist/js-modules/stopwatch-stats.module.js"></script>
 </dom-module>

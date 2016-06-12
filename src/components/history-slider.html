@@ -1,0 +1,12 @@
+<link rel="import" href="../../bower_components/paper-slider/paper-slider.html">
+<dom-module id="history-slider">
+    <template>
+        <style>
+            :host {
+            }
+        </style>
+        {{formatTime(start)}}&ndash;{{formatTime(end)}} {{timeValue(start, end)}}
+        <paper-slider id="slider" min="[[min]]" max="[[max]]" value="{{value}}"></paper-slider>
+    </template>
+    <script src="../../dist/js-modules/history-slider.module.js"></script>
+</dom-module>

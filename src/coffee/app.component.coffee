@@ -56,6 +56,11 @@ app.AppComponent = ng.core.Component(
 
       if !Array.isArray(@history = JSON.parse storage.getItem 'history')
         @history = []
+      else if @history[0][0]?
+        newHistory = []
+        for point in @history
+          newHistory.push s: point[0], e: point[1]
+        @history = newHistory
 
     @addItem()
 
@@ -72,7 +77,7 @@ app.AppComponent = ng.core.Component(
       if e.detail.bgn? and e.detail.end?
         bgn = Math.round e.detail.bgn / 60000
         end = Math.round e.detail.end / 60000
-        @history.push [bgn, end]
+        @history.push {s: bgn, e: end}
         storage.setItem 'history', JSON.stringify(@history)
 
     @delete = (index) =>

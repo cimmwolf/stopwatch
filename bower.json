@@ -31,6 +31,7 @@
     "paper-radio-group": "PolymerElements/paper-radio-group#^1.2.0",
     "paper-radio-button": "PolymerElements/paper-radio-button#^1.2.0",
     "paper-button": "PolymerElements/paper-button#^1.0.12",
-    "iron-localstorage": "^1.0.5"
+    "iron-localstorage": "^1.0.5",
+    "paper-slider": "PolymerElements/paper-slider#^1.0.11"
   }
 }
