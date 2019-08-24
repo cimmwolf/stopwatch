@@ -8,7 +8,7 @@ var polyclean = require('polyclean');
 var htmlmin = require('gulp-htmlmin');
 var cache = require('gulp-cached');
 
-gulp.task('default', ['scripts', 'css', 'components'], function() {
+gulp.task('default', ['scripts', 'css'], function() {
   return gulp.src([
     'bower_components/app-*/*.html',
     'bower_components/iron-*/*.html',
@@ -49,11 +49,6 @@ gulp.task('sass', function() {
         cascade: false
       }))
       .pipe(gulp.dest('dist/css'));
-});
-
-gulp.task('components', ['scripts'], function() {
-  return gulp.src('src/components/*')
-      .pipe(gulp.dest('dist/components'));
 });
 
 gulp.task('images', function() {
