@@ -1,6 +1,5 @@
 var path = require('path');
 var gulp = require('gulp');
-var coffee = require('gulp-coffee');
 var sass = require('gulp-sass');
 var stylemod = require('gulp-style-modules');
 var autoprefixer = require('gulp-autoprefixer');
@@ -55,7 +54,7 @@ gulp.task('sass', function() {
       .pipe(gulp.dest('dist/css'));
 });
 
-gulp.task('components', ['style-modules', 'js-modules', 'scripts'], function() {
+gulp.task('components', ['style-modules', 'scripts'], function() {
   return gulp.src('src/components/*')
       .pipe(vulcanize({
         inlineScripts: true,
@@ -65,13 +64,6 @@ gulp.task('components', ['style-modules', 'js-modules', 'scripts'], function() {
         stripExcludes: false
       }))
       .pipe(gulp.dest('dist/components'));
-});
-
-gulp.task('js-modules', function() {
-  return gulp.src('src/coffee/*.module.coffee')
-      .pipe(cache('jsmod'))
-      .pipe(coffee())
-      .pipe(gulp.dest('dist/js-modules'));
 });
 
 gulp.task('style-modules', function() {

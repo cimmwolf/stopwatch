@@ -1,4 +1,5 @@
 <link rel="import" href="../../dist/css-modules/summary.module.html">
+
 <dom-module id="stopwatch-summary">
     <template>
         <style>
@@ -15,5 +16,28 @@
             <div class="label">Вчера:</div>
         </div>
     </template>
-    <script src="../../dist/js-modules/summary.module.js"></script>
+    <script>
+      Polymer({
+        is: 'stopwatch-summary',
+        getTime: function(seconds) {
+          var duration, i, index, len, ref, timeString, value;
+          duration = moment.duration(seconds * 1000);
+          timeString = '';
+          ref = [duration.hours(), duration.minutes(), duration.seconds()];
+          for (index = i = 0, len = ref.length; i < len; index = ++i) {
+            value = ref[index];
+            if (value > 0 || timeString !== '') {
+              if (value < 10) {
+                timeString += '0';
+              }
+              timeString += value;
+              if (index < 2) {
+                timeString += ':';
+              }
+            }
+          }
+          return timeString;
+        }
+      });
+    </script>
 </dom-module>

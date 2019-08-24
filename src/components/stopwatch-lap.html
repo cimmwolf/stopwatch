@@ -1,4 +1,5 @@
 <link rel="import" href="../../dist/css-modules/stopwatch-lap.module.html">
+
 <dom-module id="stopwatch-lap">
     <template>
         <style></style>
@@ -11,5 +12,58 @@
             <span>[[format(value)]]</span>
         </div>
     </template>
-    <script src="../../dist/js-modules/stopwatch-lap.module.js"></script>
+    <script>
+      Polymer({
+        is: 'stopwatch-lap',
+        properties: {
+          value: Number,
+          shift: Number
+        },
+        format: function(duration) {
+          var i, index, len, ref, timeString, value;
+          if (!moment.isDuration(duration)) {
+            duration = moment.duration(duration);
+          }
+          timeString = '';
+          ref = [duration.hours(), duration.minutes(), duration.seconds()];
+          for (index = i = 0, len = ref.length; i < len; index = ++i) {
+            value = ref[index];
+            if (value < 10) {
+              timeString += '0';
+            }
+            timeString += value;
+            if (index < 2) {
+              timeString += ':';
+            }
+          }
+          if (index === 2 && timeString === '') {
+            timeString = '00';
+          }
+          return timeString;
+        },
+        humanize: function(duration) {
+          var i, index, len, ref, timeString, unit, units, value;
+          if (!moment.isDuration(duration)) {
+            duration = moment.duration(duration);
+          }
+          units = ['ч.', 'мин.', 'сек.'];
+          timeString = '';
+          ref = [duration.hours(), duration.minutes(), duration.seconds()];
+          for (index = i = 0, len = ref.length; i < len; index = ++i) {
+            value = ref[index];
+            unit = units.shift();
+            if (value > 0 || timeString !== '') {
+              timeString += value + ' ' + unit;
+              if (index < 2) {
+                timeString += ' ';
+              }
+            }
+            if (index === 2 && timeString === '') {
+              timeString = '00 ' + unit;
+            }
+          }
+          return timeString;
+        }
+      });
+    </script>
 </dom-module>

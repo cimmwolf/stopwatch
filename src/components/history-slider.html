@@ -1,12 +1,53 @@
 <link rel="import" href="../../bower_components/paper-slider/paper-slider.html">
 <dom-module id="history-slider">
     <template>
-        <style>
-            :host {
-            }
-        </style>
         {{formatTime(start)}}&ndash;{{formatTime(end)}} {{timeValue(start, end)}}
         <paper-slider id="slider" min="[[min]]" max="[[max]]" value="{{value}}"></paper-slider>
     </template>
-    <script src="../../dist/js-modules/history-slider.module.js"></script>
+    <script>
+      Polymer({
+        is: 'history-slider',
+        behaviors: [MyBehaviors.dateBehavior],
+        properties: {
+          start: Number,
+          end: {
+            type: Number,
+            notify: true
+          },
+          min: {
+            type: Number,
+            value: 0
+          },
+          max: Number,
+          value: Number
+        },
+        observers: ['calcParams(start)'],
+        detached: function() {
+          return this.unlisten(this.$.slider, 'immediate-value-changed', 'valueBack');
+        },
+        calcParams: function(start) {
+          var diff;
+          this.unlisten(this.$.slider, 'immediate-value-changed', 'valueBack');
+          diff = this.end - start;
+          this.max = diff;
+          this.value = diff;
+          return this.listen(this.$.slider, 'immediate-value-changed', 'valueBack');
+        },
+        formatTime: function(seconds) {
+          return moment(seconds * 60000).format('HH:mm');
+        },
+        timeValue: function(start, end) {
+          if (start !== end) {
+            return this.humanize((end - start) * 60000, 'meaning');
+          } else {
+            return '--';
+          }
+        },
+        valueBack: function(e, details) {
+          if (details.value != null) {
+            return this.set('end', details.value + this.start);
+          }
+        }
+      });
+    </script>
 </dom-module>
