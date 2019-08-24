@@ -125,6 +125,7 @@ Polymer
     if @run
       @.async ->
         @timestamp = Date.now()
+        @fire('bit')
         @timer()
       , 300
 
