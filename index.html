@@ -10,7 +10,8 @@
     <link href="/style.css" rel="stylesheet" type="text/css">
 
     <title>Секундомер</title>
-    <script src="bower_components/webcomponentsjs/webcomponents-lite.min.js"></script>
+    <script src="/bower_components/webcomponentsjs/webcomponents-loader.js"></script>
+    <link rel="import" href="/bower_components/polymer/lib/elements/custom-style.html">
 
     <link rel="import" href="/components/stopwatch-app.html">
 
@@ -18,11 +19,49 @@
     <script src="/bower_components/moment/locale/ru.js"></script>
     <script src="/bower_components/gsap/src/minified/TweenLite.min.js"></script>
     <script src="/bower_components/gsap/src/minified/plugins/CSSPlugin.min.js"></script>
-
 </head>
 <body>
 
-<stopwatch-app class="layout horizontal wrap">Загрузка...</stopwatch-app>
+<custom-style>
+    <style is="custom-style">
+        :root {
+            --primary-color: #ff9100;
+            --primary-background-color: rgba(68, 69, 72, 0.64);
+            --primary-text-color: #fff;
+            --success-color: #64dd17;
+            --info-color: #00bfa5;
+            --warning-color: #ffd600;
+            --danger-color: #d50000;
+        }
+
+        :root paper-button.primary {
+            color: var(--accent-color);
+        }
+
+        :root paper-button.success {
+            color: var(--success-color);
+        }
+
+        :root paper-button.info {
+            color: var(--success-color);
+        }
+
+        :root paper-button.warning {
+            color: var(--warning-color);
+        }
+
+        :root paper-button.danger {
+            color: var(--danger-color);
+        }
+
+        :root iron-icon.sort-icon {
+            height: 1.2em;
+            width: 1.2em;
+        }
+    </style>
+</custom-style>
+
+<stopwatch-app>Загрузка...</stopwatch-app>
 
 </body>
 </html>

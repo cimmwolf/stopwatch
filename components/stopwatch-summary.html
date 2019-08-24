@@ -1,12 +1,18 @@
+<link rel="import" href="/bower_components/polymer/polymer-element.html">
+
 <dom-module id="stopwatch-summary">
     <template>
         <style>
-            .wrapper {
+            :host {
+                display: block;
+                padding-top: 15px; }
+
+            .counter-wrapper {
                 /*noinspection CssInvalidFunction*/
                 color: var(--secondary-text-color);
             }
 
-            .wrapper {
+            .counter-wrapper {
                 overflow: hidden; }
 
             .label {
@@ -36,7 +42,7 @@
 
 
         </style>
-        <div class="wrapper">
+        <div class="counter-wrapper">
             <div class="counter today">{{getTime(today)}}</div>
             <div class="label">Сегодня:</div>
             <div class="counter yesterday">{{getTime(yesterday)}}</div>

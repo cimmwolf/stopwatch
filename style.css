@@ -50,36 +50,3 @@ a:focus {
 
 [role="button"] {
     cursor: pointer; }
-
-.text-left {
-    text-align: left; }
-
-.text-right {
-    text-align: right; }
-
-.text-center {
-    text-align: center; }
-
-stopwatch-app {
-    justify-content: center; }
-
-stopwatch-counter {
-    display: block;
-    width: 320px;
-    position: relative;
-    margin: 15px 0 0; }
-
-@media (min-width: 400px) {
-    stopwatch-counter {
-        margin: 15px auto 0; }
-}
-
-@media (min-width: 768px) {
-    stopwatch-counter {
-        width: 352px;
-        margin: 15px 15px 0; }
-}
-
-stopwatch-summary {
-    display: block;
-    padding-top: 15px; }

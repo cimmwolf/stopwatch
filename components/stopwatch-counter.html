@@ -1,3 +1,4 @@
+<link rel="import" href="/bower_components/polymer/polymer-element.html">
 <link rel="import" href="/bower_components/iron-flex-layout/iron-flex-layout-classes.html">
 <link rel="import" href="/bower_components/paper-card/paper-card.html">
 <link rel="import" href="/bower_components/paper-input/paper-input.html">
@@ -9,6 +10,13 @@
 <dom-module id="stopwatch-counter">
     <template>
         <style>
+            :host {
+                display: block;
+                width: 320px;
+                position: relative;
+                margin: 15px 0 0;
+            }
+
             paper-card:not(.running):not(.opened) {
                 /*noinspection CssInvalidFunction*/
                 color: var(--secondary-text-color);
@@ -18,6 +26,7 @@
                 /*noinspection CssInvalidFunction*/
                 border-color: var(--secondary-text-color);
             }
+
             .card-content .value {
                 font-size: 36px;
                 line-height: 1;
@@ -57,24 +66,35 @@
             paper-card {
                 display: block;
                 transition: color 100ms; }
+
             paper-card:not(.running) .pause-icon {
                 display: none; }
+
             paper-card.new .second-buttons {
                 display: none; }
+
             paper-card.ready .stop-btn, paper-card.ready .lap-btn {
                 display: none; }
+
             paper-card.opened .btn-delete {
                 visibility: visible;
                 top: 5px;
                 opacity: 1; }
+
             paper-card.opened .expand-icon {
                 transform: rotateZ(180deg); }
+
             paper-card .card-actions {
                 transition: border-color 100ms; }
-            @media (max-width: 767px) {
-                paper-card .card-actions {
-                    padding-left: 0;
-                    padding-right: 0; } }
+
+            .buttons-group {
+                display: flex;
+                text-align: center;
+            }
+
+            .buttons-group .btn:nth-child(1) {
+                flex-grow: 1;
+            }
 
             .laps-wrapper {
                 overflow: hidden; }
@@ -83,14 +103,33 @@
                 display: block;
                 position: relative;
                 width: 152px; }
+
             stopwatch-lap .shift {
                 position: absolute;
                 transform: translateX(-100%) translateY(15px); }
+
             stopwatch-lap:nth-last-of-type(1) {
                 margin-bottom: 15px; }
 
             .history-list {
                 list-style: none; }
+
+            @media (min-width: 400px) {
+                :host {
+                    margin: 15px auto 0; }
+            }
+
+            @media (max-width: 767px) {
+                paper-card .card-actions {
+                    padding-left: 0;
+                    padding-right: 0; }
+            }
+
+            @media (min-width: 768px) {
+                :host {
+                    width: 352px;
+                    margin: 15px 15px 0; }
+            }
         </style>
         <paper-card id="wrapper" class$="{{getStatus(run, meted, history)}}">
             <div class="card-content">
@@ -98,8 +137,8 @@
                 <div class="name">[[name]]</div>
             </div>
             <div class="card-actions">
-                <div class="buttons-group layout horizontal text-center">
-                    <paper-button class="btn primary-button flex" on-click="toggle">
+                <div class="buttons-group">
+                    <paper-button class="btn primary-button" on-click="toggle">
                         <iron-icon class="icon play-icon" icon="stopwatch:play-arrow"></iron-icon>
                         <iron-icon class="icon pause-icon" icon="stopwatch:pause"></iron-icon>
                     </paper-button>

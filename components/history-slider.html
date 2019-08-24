@@ -1,3 +1,4 @@
+<link rel="import" href="/bower_components/polymer/polymer-element.html">
 <link rel="import" href="/bower_components/paper-slider/paper-slider.html">
 
 <dom-module id="history-slider">
@@ -24,15 +25,15 @@
         },
         observers: ['calcParams(start)'],
         detached: function() {
-          return this.unlisten(this.$.slider, 'immediate-value-changed', 'valueBack');
+          this.$.slider.removeEventListener('immediate-value-changed', this.valueBack.bind(this));
         },
         calcParams: function(start) {
           var diff;
-          this.unlisten(this.$.slider, 'immediate-value-changed', 'valueBack');
+          this.$.slider.removeEventListener('immediate-value-changed', this.valueBack.bind(this));
           diff = this.end - start;
           this.max = diff;
           this.value = diff;
-          return this.listen(this.$.slider, 'immediate-value-changed', 'valueBack');
+          this.$.slider.addEventListener('immediate-value-changed', this.valueBack.bind(this));
         },
         formatTime: function(seconds) {
           return moment(seconds * 60000).format('HH:mm');

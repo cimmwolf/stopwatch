@@ -1,7 +1,4 @@
-<link rel="import" href="/bower_components/polymer/polymer.html">
-<link rel="import" href="/bower_components/paper-styles/paper-styles.html">
-<link rel="import" href="/bower_components/d-style/dstyle.module.html">
-<link rel="import" href="/bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="/bower_components/polymer/polymer-element.html">
 <link rel="import" href="stopwatch-icons.html">
 <link rel="import" href="stopwatch-lap.html">
 <link rel="import" href="stopwatch-counter.html">
@@ -9,23 +6,43 @@
 
 <dom-module id="stopwatch-app">
     <template>
-        <div class="layout horizontal center-justified wrap flex">
-            <template is="dom-repeat" items="{{items}}">
-                <stopwatch-counter beginning="{{item.beginning}}"
-                                   run="{{item.run}}"
-                                   name="{{item.name}}"
-                                   history="{{item.history}}"
-                                   laps="{{item.laps}}"
-                                   meted="{{item.meted}}"
-                                   on-delete="delete"
-                                   on-changed="save"
-                                   on-begin="addItem"
-                                   on-end="pushHistory"
-                                   on-bit="_touchClock"></stopwatch-counter>
-            </template>
+        <style>
+            .main-wrapper {
+                display: flex;
+                flex-wrap: wrap;
+            }
+
+            .counter-wrapper {
+                display: flex;
+                justify-content: center;
+                flex-wrap: wrap;
+            }
+
+            @media (min-width: 768px) {
+                .main-wrapper {
+                    flex-wrap: nowrap;
+                }
+            }
+        </style>
+        <div class="main-wrapper">
+            <div class="counter-wrapper">
+                <template is="dom-repeat" items="{{items}}">
+                    <stopwatch-counter beginning="{{item.beginning}}"
+                                       run="{{item.run}}"
+                                       name="{{item.name}}"
+                                       history="{{item.history}}"
+                                       laps="{{item.laps}}"
+                                       meted="{{item.meted}}"
+                                       on-delete="delete"
+                                       on-changed="save"
+                                       on-begin="addItem"
+                                       on-end="pushHistory"
+                                       on-bit="_touchClock"></stopwatch-counter>
+                </template>
+            </div>
+            <stopwatch-summary today="{{getSummaryToday(items.*, _clock)}}"
+                               yesterday="{{getSummaryYesterday(items.*, _clock)}}"></stopwatch-summary>
         </div>
-        <stopwatch-summary today="{{getSummaryToday(items.*, _clock)}}"
-                           yesterday="{{getSummaryYesterday(items.*, _clock)}}"></stopwatch-summary>
     </template>
     <script>
       var e, favicon, i, item, len, newHistory, point, prepare, ref, storage, storedData, x;
