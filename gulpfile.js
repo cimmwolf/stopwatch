@@ -1,14 +1,13 @@
-var gulp = require('gulp');
-var sass = require('gulp-sass');
-var autoprefixer = require('gulp-autoprefixer');
-var imagemin = require('gulp-imagemin');
-var cssnano = require('gulp-cssnano');
-var uglify = require('gulp-uglify');
-var polyclean = require('polyclean');
-var htmlmin = require('gulp-htmlmin');
-var cache = require('gulp-cached');
+const gulp = require('gulp');
+const autoprefixer = require('autoprefixer');
+const imagemin = require('gulp-imagemin');
+const cssNano = require('cssnano');
+const polyclean = require('polyclean');
+const htmlmin = require('gulp-htmlmin');
+const cache = require('gulp-cached');
+const postcss = require('gulp-postcss');
 
-gulp.task('default', ['scripts', 'css'], function() {
+gulp.task('default', function() {
   return gulp.src([
     'bower_components/app-*/*.html',
     'bower_components/iron-*/*.html',
@@ -28,27 +27,13 @@ gulp.task('default', ['scripts', 'css'], function() {
       .pipe(gulp.dest('bower_components'));
 });
 
-gulp.task('scripts', function() {
-  return gulp.src(['bower_components/moment/locale/ru.js'])
-      .pipe(cache('uglifying'))
-      .pipe(uglify())
-      .pipe(gulp.dest('dist/js'));
-});
-
-gulp.task('css', ['sass'], function() {
-  gulp.src('dist/css/*.css')
-      .pipe(cssnano())
-      .pipe(gulp.dest('dist/css'));
-});
-
-gulp.task('sass', function() {
-  return gulp.src(['src/sass/*.sass', '!src/sass/*.module.sass'])
-      .pipe(sass({includePaths: ['bower_components/bootstrap-sass/assets/stylesheets']}).on('error', sass.logError))
-      .pipe(autoprefixer({
-        browsers: ['last 3 versions'],
-        cascade: false
-      }))
-      .pipe(gulp.dest('dist/css'));
+gulp.task('css', function() {
+  gulp.src('style.css')
+      .pipe(postcss([
+        autoprefixer,
+        cssNano({safe: true}),
+      ]))
+      .pipe(gulp.dest('./'));
 });
 
 gulp.task('images', function() {
@@ -65,4 +50,4 @@ gulp.task('images', function() {
       .pipe(gulp.dest('img'));
 });
 
-gulp.task('publish', ['images']);
+gulp.task('publish', ['images', 'css']);
