@@ -1,9 +1,9 @@
-<link rel="import" href="../../dist/css-modules/stopwatch-lap.module.html">
-
 <dom-module id="stopwatch-lap">
     <template>
-        <style></style>
-        <style include="stopwatch-lap.module"></style>
+        <style>.shift {
+            position: absolute;
+            transform: translateX(-100%) translateY(15px); }
+        </style>
         <div class="lap">
             <template is="dom-if" if="{{shift}}">
                 <span class="shift">+ [[humanize(shift)]]</span>

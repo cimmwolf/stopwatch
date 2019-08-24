@@ -1,5 +1,3 @@
-<link rel="import" href="../../dist/css-modules/summary.module.html">
-
 <dom-module id="stopwatch-summary">
     <template>
         <style>
@@ -7,8 +5,37 @@
                 /*noinspection CssInvalidFunction*/
                 color: var(--secondary-text-color);
             }
+
+            .wrapper {
+                overflow: hidden; }
+
+            .label {
+                position: relative; }
+
+            .counter {
+                padding-top: 20px;
+                text-align: right; }
+
+            .counter:empty {
+                display: none; }
+
+            .counter:empty + .label {
+                display: none; }
+
+            .counter.today {
+                font-size: 32.4px; }
+
+            .counter.today + .label {
+                top: -66.28571px; }
+
+            .counter.yesterday {
+                font-size: 28.8px; }
+
+            .counter.yesterday + .label {
+                top: -61.14286px; }
+
+
         </style>
-        <style include="summary.module"></style>
         <div class="wrapper">
             <div class="counter today">{{getTime(today)}}</div>
             <div class="label">Сегодня:</div>

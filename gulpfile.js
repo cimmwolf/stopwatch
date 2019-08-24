@@ -1,10 +1,7 @@
-var path = require('path');
 var gulp = require('gulp');
 var sass = require('gulp-sass');
-var stylemod = require('gulp-style-modules');
 var autoprefixer = require('gulp-autoprefixer');
 var imagemin = require('gulp-imagemin');
-var vulcanize = require('gulp-vulcanize');
 var cssnano = require('gulp-cssnano');
 var uglify = require('gulp-uglify');
 var polyclean = require('polyclean');
@@ -54,31 +51,9 @@ gulp.task('sass', function() {
       .pipe(gulp.dest('dist/css'));
 });
 
-gulp.task('components', ['style-modules', 'scripts'], function() {
+gulp.task('components', ['scripts'], function() {
   return gulp.src('src/components/*')
-      .pipe(vulcanize({
-        inlineScripts: true,
-        inlineCss: true,
-        stripComments: true,
-        excludes: ['bower_components/', 'dist/components/'],
-        stripExcludes: false
-      }))
       .pipe(gulp.dest('dist/components'));
-});
-
-gulp.task('style-modules', function() {
-  return gulp.src('src/sass/*.module.sass')
-      .pipe(cache('cssmod'))
-      .pipe(sass().on('error', sass.logError))
-      .pipe(stylemod({
-        filename: function(file) {
-          return path.basename(file.path, path.extname(file.path));
-        },
-        moduleId: function(file) {
-          return path.basename(file.path, path.extname(file.path));
-        }
-      }))
-      .pipe(gulp.dest('dist/css-modules'));
 });
 
 gulp.task('images', function() {

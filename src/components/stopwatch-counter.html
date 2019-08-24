@@ -1,12 +1,11 @@
-<link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout-classes.html">
-<link rel="import" href="../../bower_components/paper-card/paper-card.html">
-<link rel="import" href="../../bower_components/paper-input/paper-input.html">
-<link rel="import" href="../../bower_components/paper-button/paper-button.html">
-<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
-<link rel="import" href="../../bower_components/iron-collapse/iron-collapse.html">
-<link rel="import" href="../../bower_components/neon-animation/neon-animation-runner-behavior.html">
+<link rel="import" href="/bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+<link rel="import" href="/bower_components/paper-card/paper-card.html">
+<link rel="import" href="/bower_components/paper-input/paper-input.html">
+<link rel="import" href="/bower_components/paper-button/paper-button.html">
+<link rel="import" href="/bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="/bower_components/iron-collapse/iron-collapse.html">
+<link rel="import" href="/bower_components/neon-animation/neon-animation-runner-behavior.html">
 
-<link rel="import" href="../../dist/css-modules/stopwatch.module.html">
 <dom-module id="stopwatch-counter">
     <template>
         <style>
@@ -19,8 +18,80 @@
                 /*noinspection CssInvalidFunction*/
                 border-color: var(--secondary-text-color);
             }
+            .card-content .value {
+                font-size: 36px;
+                line-height: 1;
+                text-align: center; }
+
+            .card-content .name {
+                min-height: 20px;
+                margin-bottom: -20px; }
+
+            .btn {
+                display: block; }
+
+            .icon {
+                height: 36px;
+                width: 36px; }
+
+            .info {
+                overflow: hidden;
+                padding: 0 15px; }
+
+            .btn-delete {
+                position: absolute;
+                top: 60px;
+                right: 5px;
+                width: 35px;
+                height: 35px;
+                visibility: hidden;
+                opacity: 0;
+                transition: top 300ms ease-out, opacity 300ms ease-out; }
+
+            .expand-icon {
+                transition: transform 300ms; }
+
+            .running .play-icon {
+                display: none; }
+
+            paper-card {
+                display: block;
+                transition: color 100ms; }
+            paper-card:not(.running) .pause-icon {
+                display: none; }
+            paper-card.new .second-buttons {
+                display: none; }
+            paper-card.ready .stop-btn, paper-card.ready .lap-btn {
+                display: none; }
+            paper-card.opened .btn-delete {
+                visibility: visible;
+                top: 5px;
+                opacity: 1; }
+            paper-card.opened .expand-icon {
+                transform: rotateZ(180deg); }
+            paper-card .card-actions {
+                transition: border-color 100ms; }
+            @media (max-width: 767px) {
+                paper-card .card-actions {
+                    padding-left: 0;
+                    padding-right: 0; } }
+
+            .laps-wrapper {
+                overflow: hidden; }
+
+            stopwatch-lap {
+                display: block;
+                position: relative;
+                width: 152px; }
+            stopwatch-lap .shift {
+                position: absolute;
+                transform: translateX(-100%) translateY(15px); }
+            stopwatch-lap:nth-last-of-type(1) {
+                margin-bottom: 15px; }
+
+            .history-list {
+                list-style: none; }
         </style>
-        <style include="stopwatch.module"></style>
         <paper-card id="wrapper" class$="{{getStatus(run, meted, history)}}">
             <div class="card-content">
                 <div class="value" title="[[asMinutes(value)]]">[[format(value)]]</div>
