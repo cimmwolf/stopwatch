@@ -5,7 +5,6 @@ var sass = require('gulp-sass');
 var stylemod = require('gulp-style-modules');
 var autoprefixer = require('gulp-autoprefixer');
 var imagemin = require('gulp-imagemin');
-var newer = require('gulp-newer');
 var vulcanize = require('gulp-vulcanize');
 var cssnano = require('gulp-cssnano');
 var uglify = require('gulp-uglify');
@@ -13,24 +12,24 @@ var polyclean = require('polyclean');
 var htmlmin = require('gulp-htmlmin');
 var cache = require('gulp-cached');
 
-gulp.task('default', ['scripts', 'css', 'components', 'images'], function () {
-    return gulp.src([
-        'bower_components/app-*/*.html',
-        'bower_components/iron-*/*.html',
-        'bower_components/paper-*/*.html',
-        'bower_components/google-*/*.html',
-        'bower_components/gold-*/*.html',
-        'bower_components/neon-*/*.html',
-        'bower_components/platinum-*/*.html',
-        'bower_components/polymer/*.html',
-        'dist/components/*.html'
-    ], {base: './'})
-        .pipe(cache('components'))
-        .pipe(polyclean.cleanCss())
-        .pipe(polyclean.leftAlignJs())
-        .pipe(polyclean.uglifyJs())
-        .pipe(htmlmin({removeComments: true}))
-        .pipe(gulp.dest('bower_components'));
+gulp.task('default', ['scripts', 'css', 'components'], function() {
+  return gulp.src([
+    'bower_components/app-*/*.html',
+    'bower_components/iron-*/*.html',
+    'bower_components/paper-*/*.html',
+    'bower_components/google-*/*.html',
+    'bower_components/gold-*/*.html',
+    'bower_components/neon-*/*.html',
+    'bower_components/platinum-*/*.html',
+    'bower_components/polymer/*.html',
+    'dist/components/*.html'
+  ], {base: './'})
+      .pipe(cache('components'))
+      .pipe(polyclean.cleanCss())
+      .pipe(polyclean.leftAlignJs())
+      .pipe(polyclean.uglifyJs())
+      .pipe(htmlmin({removeComments: true}))
+      .pipe(gulp.dest('bower_components'));
 });
 
 gulp.task('scripts', function() {
@@ -90,9 +89,18 @@ gulp.task('style-modules', function() {
       .pipe(gulp.dest('dist/css-modules'));
 });
 
-gulp.task('images', function () {
-    return gulp.src(['src/img/**/*', 'bower_components/d-style/src/img/main-background.jpg'])
-        .pipe(newer('dist/img'))
-        .pipe(imagemin())
-        .pipe(gulp.dest('dist/img'));
+gulp.task('images', function() {
+  return gulp.src('img/**/*')
+      .pipe(imagemin([
+        require('imagemin-jpegoptim')({max: 88}),
+      ]))
+      .pipe(imagemin([
+        imagemin.gifsicle(),
+        imagemin.jpegtran({progressive: true}),
+        imagemin.optipng(),
+        imagemin.svgo(),
+      ]))
+      .pipe(gulp.dest('img'));
 });
+
+gulp.task('publish', ['images']);
