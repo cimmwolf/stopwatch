@@ -45,38 +45,37 @@
         </div>
     </template>
     <script>
-      var e, favicon, i, item, len, newHistory, point, prepare, ref, storage, storedData, x;
-      prepare = function(item) {
-        (item.beginning != null) || (item.beginning = false);
-        (item.run != null) || (item.run = false);
-        (item.name != null) || (item.name = '');
-        (item.history != null) || (item.history = []);
-        (item.laps != null) || (item.laps = []);
-        (item.meted != null) || (item.meted = 0);
-        return item;
-      };
-      Polymer({
-        is: 'stopwatch-app',
-        properties: {
-          items: {
-            type: Array,
-            value: function() {
-              return [];
-            }
-          },
-          _clock: {type: String, value: ''}
-        },
-        ready: function() {
-          try {
-            storage = window['localStorage'];
-            x = '__storage_test__';
-            storage.setItem(x, x);
-            storage.removeItem(x);
-          } catch (error) {
-            e = error;
-            console.log('Local storage is unsupported or unavailable');
+      let storage;
+      try {
+        storage = window['localStorage'];
+        let x = '__storage_test__';
+        storage.setItem(x, x);
+        storage.removeItem(x);
+      } catch (error) {
+        console.log('Local storage is unsupported or unavailable');
+      }
+
+      class StopwatchApp extends Polymer.Element {
+        static get is() {
+          return 'stopwatch-app';
+        }
+
+        static get properties() {
+          return {
+            items: {
+              type: Array,
+              value: function() {
+                return [];
+              }
+            },
+            _clock: {type: String, value: ''}
           }
+        }
+
+        ready() {
+          super.ready();
           if (storage != null) {
+            let storedData;
             if ((storedData = storage.getItem('stopwatches')) != null) {
               storedData = storedData.replace(/(\["end",(\d+)]),\["end",(\d+)]/g, '$1');
               storedData = JSON.parse(storedData);
@@ -84,22 +83,20 @@
             if (!Array.isArray(storedData)) {
               storedData = [];
             }
-            this.items = (function() {
-              var i, len, results;
-              results = [];
-              for (i = 0, len = storedData.length; i < len; i++) {
-                item = storedData[i];
-                results.push(prepare(item));
-              }
-              return results;
-            })();
+            let results = [];
+            for (let i = 0, len = storedData.length; i < len; i++) {
+              let item = storedData[i];
+              results.push(this._prepare(item));
+            }
+            this.items = results;
+
             if (!Array.isArray(this.history = JSON.parse(storage.getItem('history')))) {
               this.history = [];
             } else if (this.history[0][0] != null) {
-              newHistory = [];
-              ref = this.history;
-              for (i = 0, len = ref.length; i < len; i++) {
-                point = ref[i];
+              let newHistory = [];
+              let ref = this.history;
+              for (let i = 0, len = ref.length; i < len; i++) {
+                let point = ref[i];
                 newHistory.push({
                   s: point[0],
                   e: point[1]
@@ -110,48 +107,50 @@
           }
           this.addItem();
           this.favicon();
-        },
-        addItem: function() {
-          this.push('items', prepare({}));
-        },
-        save: function() {
-          var j, len1, ref1, stopwatch, toSave;
+        }
+
+        addItem() {
+          this.push('items', this._prepare({}));
+        }
+
+        save() {
           this.favicon();
           if (storage != null) {
-            toSave = [];
-            ref1 = this.items;
-            for (j = 0, len1 = ref1.length; j < len1; j++) {
-              stopwatch = ref1[j];
+            let toSave = [];
+            let ref1 = this.items;
+            for (let j = 0, len1 = ref1.length; j < len1; j++) {
+              let stopwatch = ref1[j];
               if (stopwatch.beginning !== false) {
                 toSave.push(stopwatch);
               }
             }
             return storage.setItem('stopwatches', JSON.stringify(toSave));
           }
-        },
-        pushHistory: function(e) {
-          var bgn, end;
+        }
+
+        pushHistory(e) {
           if ((e.detail.bgn != null) && (e.detail.end != null)) {
-            bgn = Math.round(e.detail.bgn / 60000);
-            end = Math.round(e.detail.end / 60000);
+            let bgn = Math.round(e.detail.bgn / 60000);
+            let end = Math.round(e.detail.end / 60000);
             this.history.push({
               s: bgn,
               e: end
             });
             return storage.setItem('history', JSON.stringify(this.history));
           }
-        },
-        getSummaryToday: function() {
-          var end, index, j, k, len1, len2, ref1, ref2, start, stopwatch, summary, today, yesterday;
+        }
+
+        getSummaryToday() {
+          let end, start, summary;
           summary = start = end = 0;
-          today = moment().startOf('day');
-          yesterday = moment().subtract(1, 'days').startOf('day');
-          ref1 = this.items || [];
-          for (j = 0, len1 = ref1.length; j < len1; j++) {
-            stopwatch = ref1[j];
-            ref2 = stopwatch.history;
-            for (index = k = 0, len2 = ref2.length; k < len2; index = ++k) {
-              item = ref2[index];
+          let today = moment().startOf('day');
+          let yesterday = moment().subtract(1, 'days').startOf('day');
+          let ref1 = this.items || [];
+          for (let j = 0, len1 = ref1.length; j < len1; j++) {
+            let stopwatch = ref1[j];
+            let ref2 = stopwatch.history;
+            for (let index = 0, k = 0, len2 = ref2.length; k < len2; index = ++k) {
+              let item = ref2[index];
               if (moment(item[1]).isBefore(today)) {
                 if (item[0] === 'bgn' && moment(item[1]).isSameOrAfter(yesterday) && (stopwatch.history[index + 1] != null) && moment(stopwatch.history[index + 1][1]).isSameOrAfter(today)) {
                   start = today.valueOf();
@@ -177,18 +176,19 @@
             }
           }
           return Math.round(summary / 1000);
-        },
-        getSummaryYesterday: function() {
-          var end, index, j, k, len1, len2, ref1, ref2, start, stopwatch, summary, yesterdayEnd, yesterdayStart;
+        }
+
+        getSummaryYesterday() {
+          let end, index, k, len2, ref1, ref2, start, stopwatch, summary, yesterdayEnd, yesterdayStart;
           summary = start = end = 0;
           yesterdayStart = moment().subtract(1, 'days').startOf('day');
           yesterdayEnd = moment().subtract(1, 'days').endOf('day');
           ref1 = this.items || [];
-          for (j = 0, len1 = ref1.length; j < len1; j++) {
+          for (let j = 0, len1 = ref1.length; j < len1; j++) {
             stopwatch = ref1[j];
             ref2 = stopwatch.history;
             for (index = k = 0, len2 = ref2.length; k < len2; index = ++k) {
-              item = ref2[index];
+              let item = ref2[index];
               if (moment(item[1]).isBefore(yesterdayStart)) {
                 if (item[0] === 'bgn' && (stopwatch.history[index + 1] != null) && moment(stopwatch.history[index + 1][1]).isBetween(yesterdayStart, yesterdayEnd, null, '[]')) {
                   start = yesterdayStart.valueOf();
@@ -221,13 +221,14 @@
             }
           }
           return Math.round(summary / 1000);
-        },
-        favicon: function() {
-          var href, j, len1, link, ref1;
+        }
+
+        favicon() {
+          let href, link, ref1;
           href = '/img/favicon.png';
           ref1 = this.items;
-          for (j = 0, len1 = ref1.length; j < len1; j++) {
-            item = ref1[j];
+          for (let j = 0, len1 = ref1.length; j < len1; j++) {
+            let item = ref1[j];
             if (item.run) {
               href = '/img/favicon-r.png';
               break;
@@ -235,15 +236,29 @@
           }
           link = document.getElementById('favicon');
           link.href = href;
-        },
-        delete: function(e) {
-          var index = this.items.indexOf(e.model.item);
+        }
+
+        delete(e) {
+          let index = this.items.indexOf(e.model.item);
           this.splice('items', index, 1);
           this.save();
-        },
-        _touchClock: function() {
+        }
+
+        _touchClock() {
           this._clock = this._clock === 'tick' ? 'tock' : 'tick';
         }
-      });
+
+        _prepare(item) {
+          (item.beginning != null) || (item.beginning = false);
+          (item.run != null) || (item.run = false);
+          (item.name != null) || (item.name = '');
+          (item.history != null) || (item.history = []);
+          (item.laps != null) || (item.laps = []);
+          (item.meted != null) || (item.meted = 0);
+          return item;
+        }
+      }
+
+      customElements.define(StopwatchApp.is, StopwatchApp);
     </script>
 </dom-module>

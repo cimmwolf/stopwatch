@@ -1,5 +1,6 @@
 <link rel="import" href="/bower_components/polymer/polymer-element.html">
 <link rel="import" href="/bower_components/paper-slider/paper-slider.html">
+<link rel="import" href="date-behavior.html">
 
 <dom-module id="history-slider">
     <template>
@@ -7,49 +8,66 @@
         <paper-slider id="slider" min="[[min]]" max="[[max]]" value="{{value}}"></paper-slider>
     </template>
     <script>
-      Polymer({
-        is: 'history-slider',
-        behaviors: [MyBehaviors.dateBehavior],
-        properties: {
-          start: Number,
-          end: {
-            type: Number,
-            notify: true
-          },
-          min: {
-            type: Number,
-            value: 0
-          },
-          max: Number,
-          value: Number
-        },
-        observers: ['calcParams(start)'],
-        detached: function() {
+      class HistorySlider extends DateMixin(Polymer.Element) {
+        static get is() {
+          return 'history-slider';
+        }
+
+        static get properties() {
+          return {
+            start: Number,
+            end: {
+              type: Number,
+              notify: true
+            },
+            min: {
+              type: Number,
+              value: 0
+            },
+            max: Number,
+            value: Number
+          }
+        }
+
+        static get observers() {
+          return [
+            'calcParams(start)'
+          ]
+        }
+
+        disconnectedCallback() {
+          super.disconnectedCallback();
           this.$.slider.removeEventListener('immediate-value-changed', this.valueBack.bind(this));
-        },
-        calcParams: function(start) {
-          var diff;
+        }
+
+
+        calcParams(start) {
           this.$.slider.removeEventListener('immediate-value-changed', this.valueBack.bind(this));
-          diff = this.end - start;
+          let diff = this.end - start;
           this.max = diff;
           this.value = diff;
           this.$.slider.addEventListener('immediate-value-changed', this.valueBack.bind(this));
-        },
-        formatTime: function(seconds) {
+        }
+
+        formatTime(seconds) {
           return moment(seconds * 60000).format('HH:mm');
-        },
-        timeValue: function(start, end) {
+        }
+
+        timeValue(start, end) {
           if (start !== end) {
             return this.humanize((end - start) * 60000, 'meaning');
           } else {
             return '--';
           }
-        },
-        valueBack: function(e, details) {
+        }
+
+        valueBack(e, details) {
           if (details.value != null) {
             return this.set('end', details.value + this.start);
           }
         }
-      });
+      }
+
+      customElements.define(HistorySlider.is, HistorySlider);
     </script>
 </dom-module>

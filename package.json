@@ -17,5 +17,35 @@
   "author": "Denis Beliaev <denis@vistro.ru>",
   "browserslist": [
     "last 2 versions and > 1% in RU"
-  ]
+  ],
+  "eslintConfig": {
+    "extends": [
+      "eslint:recommended",
+      "google"
+    ],
+    "parserOptions": {
+      "ecmaVersion": 6,
+      "sourceType": "module"
+    },
+    "env": {
+      "browser": true,
+      "es6": true
+    },
+    "plugins": [
+      "html"
+    ],
+    "rules": {
+      "brace-style": "off",
+      "new-cap": [
+        "error",
+        {
+          "capIsNewExceptions": [
+            "Polymer"
+          ]
+        }
+      ],
+      "no-var": "off",
+      "require-jsdoc": "off"
+    }
+  }
 }

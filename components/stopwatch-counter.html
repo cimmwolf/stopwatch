@@ -114,6 +114,11 @@
             .history-list {
                 list-style: none; }
 
+            .laps {
+                display: flex;
+                flex-direction: column;
+                align-items: flex-end;
+            }
             @media (min-width: 400px) {
                 :host {
                     margin: 15px auto 0; }
@@ -166,7 +171,7 @@
                 </template>
             </iron-collapse>
             <div class="laps-wrapper">
-                <div class="laps layout vertical end" id="laps">
+                <div class="laps" id="laps">
                     <template is="dom-repeat" items="{{laps}}">
                         <stopwatch-lap value="{{item.value}}" shift="{{item.shift}}"></stopwatch-lap>
                     </template>
@@ -176,43 +181,49 @@
         </paper-card>
     </template>
     <script>
-      Polymer({
-        is: 'stopwatch-counter',
-        behaviors: [Polymer.NeonAnimationRunnerBehavior],
-        properties: {
-          value: {
-            type: Number,
-            computed: "getValue(run, beginning, meted, timestamp)"
-          },
-          beginning: {
-            type: Number,
-            notify: true
-          },
-          run: {
-            type: Boolean,
-            notify: true
-          },
-          name: {
-            type: String,
-            notify: true
-          },
-          meted: {
-            type: Number,
-            notify: true
-          },
-          timestamp: {
-            type: Number,
-            value: Date.now()
-          },
-          laps: Array
-        },
-        ready: function() {
-          return this.isNew = true;
-        },
-        attached: function() {
-          var aConf;
+      class StopwatchCounter extends Polymer.mixinBehaviors([Polymer.NeonAnimationRunnerBehavior], Polymer.Element) {
+        static get is() {
+          return 'stopwatch-counter';
+        }
+
+        static get properties() {
+          return {
+            value: {
+              type: Number,
+              computed: "getValue(run, beginning, meted, timestamp)"
+            },
+            beginning: {
+              type: Number,
+              notify: true
+            },
+            run: {
+              type: Boolean,
+              notify: true
+            },
+            name: {
+              type: String,
+              notify: true
+            },
+            meted: {
+              type: Number,
+              notify: true
+            },
+            timestamp: {
+              type: Number,
+              value: Date.now()
+            },
+            laps: Array
+          }
+        }
+
+        ready() {
+          super.ready();
+          this.isNew = true;
+        }
+
+        connectedCallback() {
           if (this.isNew) {
-            aConf = {
+            let aConf = {
               y: '100%'
             };
             if ((this.previousSibling != null) && this.offsetTop === this.previousSibling.offsetTop) {
@@ -222,16 +233,16 @@
             this.isNew = false;
           }
           return this.timer();
-        },
-        format: function(duration) {
-          var i, index, len, ref, timeString, value;
+        }
+
+        format(duration) {
           if (!moment.isDuration(duration)) {
             duration = moment.duration(duration);
           }
-          timeString = '';
-          ref = [duration.hours(), duration.minutes(), duration.seconds()];
-          for (index = i = 0, len = ref.length; i < len; index = ++i) {
-            value = ref[index];
+          let timeString = '';
+          let ref = [duration.hours(), duration.minutes(), duration.seconds()];
+          for (let index = 0, i = 0, len = ref.length; i < len; index = ++i) {
+            let value = ref[index];
             if (value > 0 || timeString !== '') {
               if (value < 10) {
                 timeString += '0';
@@ -246,18 +257,18 @@
             }
           }
           return timeString;
-        },
-        humanize: function(duration) {
-          var i, index, len, ref, timeString, unit, units, value;
+        }
+
+        humanize(duration) {
           if (!moment.isDuration(duration)) {
             duration = moment.duration(duration);
           }
-          units = ['ч.', 'мин.', 'сек.'];
-          timeString = '';
-          ref = [duration.hours(), duration.minutes(), duration.seconds()];
-          for (index = i = 0, len = ref.length; i < len; index = ++i) {
-            value = ref[index];
-            unit = units.shift();
+          let units = ['ч.', 'мин.', 'сек.'];
+          let timeString = '';
+          let ref = [duration.hours(), duration.minutes(), duration.seconds()];
+          for (let index = 0, i = 0, len = ref.length; i < len; index = ++i) {
+            let value = ref[index];
+            let unit = units.shift();
             if (value > 0 || timeString !== '') {
               timeString += value + ' ' + unit;
               if (index < 2) {
@@ -269,9 +280,10 @@
             }
           }
           return timeString;
-        },
-        getValue: function(run, beginning, meted) {
-          var duration;
+        }
+
+        getValue(run, beginning, meted) {
+          let duration;
           if (run !== false) {
             duration = moment.duration(Date.now() - beginning);
           } else {
@@ -279,9 +291,10 @@
           }
           duration.add(meted);
           return duration;
-        },
-        getStatus: function(run, meted, history) {
-          var status;
+        }
+
+        getStatus(run, meted, history) {
+          let status;
           if (history.length === 0) {
             return 'new';
           }
@@ -296,13 +309,13 @@
             status += ' opened';
           }
           return status;
-        },
-        getGroupedHistory: function(e) {
-          var duration, end, gHistory, group, history, i, index, len, point, row, start;
-          history = e.base.slice(0);
-          start = 0;
-          end = 0;
-          gHistory = [
+        }
+
+        getGroupedHistory(e) {
+          let history = e.base.slice(0);
+          let start = 0;
+          let end = 0;
+          let gHistory = [
             {
               day: 'Сегодня',
               history: []
@@ -314,8 +327,8 @@
               history: []
             }
           ];
-          for (index = i = 0, len = history.length; i < len; index = ++i) {
-            point = history[index];
+          for (let index = 0, i = 0, len = history.length; i < len; index = ++i) {
+            let point = history[index];
             if (start === 0 && point[0] === 'bgn') {
               start = moment(point[1]);
               continue;
@@ -324,14 +337,14 @@
               end = moment(point[1]);
             }
             if (start !== 0 && end !== 0) {
-              group = 1;
+              let group = 1;
               if (start.isSameOrAfter(moment().startOf('day'))) {
                 group = 0;
               } else if (start.isBefore(moment().subtract(1, 'days').startOf('day'))) {
                 group = 2;
               }
-              duration = end.diff(start);
-              row = start.format('HH:mm') + ' -> ' + end.format('HH:mm') + ' (' + this.humanize(duration) + ')';
+              let duration = end.diff(start);
+              let row = start.format('HH:mm') + ' -> ' + end.format('HH:mm') + ' (' + this.humanize(duration) + ')';
               if (group > 1) {
                 row = start.format('D MMM') + ' ' + start.format('HH:mm') + ' -> ' + end.format('D MMM') + ' ' + end.format('HH:mm') + ' (' + this.humanize(duration) + ')';
               }
@@ -343,28 +356,29 @@
             return item.history.length !== 0;
           });
           return gHistory;
-        },
-        timer: function() {
+        }
+
+        timer() {
           if (this.run) {
-            return this.async(function() {
+            setTimeout(() => {
               this.timestamp = Date.now();
-              this.fire('bit');
+              this.dispatchEvent(new CustomEvent('bit', {bubbles: true, composed: true}));
               return this.timer();
             }, 300);
           }
-        },
-        moreInfo: function() {
-          var moreInfo;
-          moreInfo = this.$.moreInfo;
+        }
+
+        moreInfo() {
+          let moreInfo = this.$.moreInfo;
           moreInfo.toggle();
           return this.$.wrapper.toggleClass('opened', moreInfo.opened);
-        },
-        toggle: function() {
-          var now;
-          now = Date.now();
+        }
+
+        toggle() {
+          let now = Date.now();
           if (!this.run) {
             if (this.beginning === false) {
-              this.fire('begin');
+              this.dispatchEvent(new CustomEvent('begin', {bubbles: true, composed: true}));
             }
             this.beginning = now;
             this.push('history', ['bgn', now]);
@@ -374,34 +388,43 @@
             this.run = false;
             this.meted += now - this.beginning;
             this.push('history', ['end', now]);
-            this.fire('end', {
-              bgn: this.beginning,
-              end: now
-            });
+            this.dispatchEvent(new CustomEvent('end', {
+              detail: {
+                bgn: this.beginning,
+                end: now
+              },
+              bubbles: true,
+              composed: true
+            }));
           }
-          return this.fire('changed');
-        },
-        stop: function() {
-          var now;
-          now = Date.now();
+          this.dispatchEvent(new CustomEvent('changed', {bubbles: true, composed: true}));
+        }
+
+        stop() {
+          let now = Date.now();
           if (this.run) {
-            this.fire('end', {
-              bgn: this.beginning,
-              end: now
-            });
+            this.dispatchEvent(new CustomEvent('end', {
+              detail: {
+                bgn: this.beginning,
+                end: now
+              },
+              bubbles: true,
+              composed: true
+            }));
             this.push('history', ['end', now]);
             this.run = false;
           }
           this.meted = 0;
           this.splice('laps', 0, 9999);
-          return this.fire('changed');
-        },
-        "delete": function() {
-          return this.fire('delete');
-        },
-        lap: function() {
-          var info;
-          info = {};
+          this.dispatchEvent(new CustomEvent('changed', {bubbles: true, composed: true}));
+        }
+
+        delete() {
+          this.dispatchEvent(new CustomEvent('delete', {bubbles: true, composed: true}));
+        }
+
+        lap() {
+          let info = {};
           info.value = this.meted;
           if (this.run !== false) {
             info.value += Date.now() - this.beginning;
@@ -417,21 +440,25 @@
               marginTop: '-24px',
               ease: Power2.easeOut
             });
-            return this.fire('changed');
+            this.dispatchEvent(new CustomEvent('changed', {bubbles: true, composed: true}));
           }
-        },
-        onNameChange: function() {
-          return this.fire('changed');
-        },
-        asMinutes: function(duration) {
-          var forms, n;
-          n = Math.round(duration.asMinutes());
+        }
+
+        onNameChange() {
+          this.dispatchEvent(new CustomEvent('changed', {bubbles: true, composed: true}))
+        }
+
+        asMinutes(duration) {
+          let n = Math.round(duration.asMinutes());
           if (n < 1) {
             return '';
           }
-          forms = ['минута', 'минуты', 'минут'];
+          let forms = ['минута', 'минуты', 'минут'];
           return n + ' ' + forms[n % 10 === 1 && n % 100 !== 11 ? 0 : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20) ? 1 : 2];
         }
-      });
+
+      }
+
+      customElements.define(StopwatchCounter.is, StopwatchCounter);
     </script>
 </dom-module>

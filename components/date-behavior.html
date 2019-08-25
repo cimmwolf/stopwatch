@@ -1,21 +1,18 @@
 <script>
-  window.MyBehaviors = window.MyBehaviors || {};
-
-  MyBehaviors.dateBehavior = {
-    humanize: function(duration, mode) {
-      var i, index, len, ref, timeString, unit, units, value;
+  DateMixin = (superClass) => class extends superClass {
+    humanize(duration, mode) {
       if (mode == null) {
         mode = 'verbose';
       }
       if (!moment.isDuration(duration)) {
         duration = moment.duration(duration);
       }
-      units = ['ч.', 'мин.', 'сек.'];
-      timeString = '';
-      ref = [duration.hours(), duration.minutes(), duration.seconds()];
-      for (index = i = 0, len = ref.length; i < len; index = ++i) {
-        value = ref[index];
-        unit = units.shift();
+      let units = ['ч.', 'мин.', 'сек.'];
+      let timeString = '';
+      let ref = [duration.hours(), duration.minutes(), duration.seconds()];
+      for (let index = 0, i = 0, len = ref.length; i < len; index = ++i) {
+        let value = ref[index];
+        let unit = units.shift();
         if (value > 0 || (mode === 'verbose' && timeString !== '')) {
           timeString += value + ' ' + unit;
           if (index < 2) {
@@ -28,5 +25,5 @@
       }
       return timeString;
     }
-  };
+  }
 </script>

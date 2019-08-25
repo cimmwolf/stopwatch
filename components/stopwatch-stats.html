@@ -31,10 +31,13 @@
         </template>
     </template>
     <script>
-        Polymer({
-          is: 'stopwatch-stats',
-          behaviors: [MyBehaviors.dateBehavior],
-          properties: {
+      class StopwatchStats extends DateMixin(Polymer.Element) {
+        static get is() {
+          return 'stopwatch-stats';
+        }
+
+        static get properties() {
+          return {
             history: Array,
             data: {
               type: Object
@@ -50,116 +53,127 @@
               type: String,
               value: ''
             }
-          },
-          observers: ['displayData(data.*, timeRange)', 'historyChanged(history.*)'],
-          ready: function() {
-            this.$.googleChart.options = {
-              title: 'Статистика таймеров'
-            };
-            return this.$.googleChart.cols = [
-              {
-                label: 'День',
-                type: 'string'
-              }, {
-                label: 'Часы',
-                type: 'number'
-              }
-            ];
-          },
-          historyChanged: function() {
-            return this.set('data', this.prepareData(this.history));
-          },
-          displayData: function() {
-            var day, duration, keys, rows, start, today;
-            keys = Object.keys(this.data);
-            keys.sort();
-            day = moment(parseInt(keys[0]));
-            today = moment().startOf('day');
-            start = moment().subtract(1, this.timeRange + 's');
-            rows = [];
-            while (true) {
-              if (day.isAfter(start)) {
-                duration = moment.duration(this.data[day.valueOf()]);
-                rows.push([
-                  day.format(this.dateFormat), {
-                    v: duration.asHours(),
-                    f: this.humanize(duration, 'meaning')
-                  }
-                ]);
-              }
-              if (!(day.add(1, 'd').valueOf() <= today)) {
-                break;
-              }
+          };
+        }
+
+        static get observers() {
+          return ['displayData(data.*, timeRange)', 'historyChanged(history.*)']
+        }
+
+        ready() {
+          super.ready();
+          this.$.googleChart.options = {
+            title: 'Статистика таймеров'
+          };
+          return this.$.googleChart.cols = [
+            {
+              label: 'День',
+              type: 'string'
+            }, {
+              label: 'Часы',
+              type: 'number'
             }
-            return this.$.googleChart.rows = rows;
-          },
-          prepareData: function(history) {
-            var end, endDay, i, len, parsedHistory, point, start, startDay;
-            if (history[0][0] != null) {
-              return;
-            }
-            start = 0;
-            end = 0;
-            parsedHistory = {};
-            for (i = 0, len = history.length; i < len; i++) {
-              point = history[i];
-              start = moment(point.s * 60000);
-              end = moment(point.e * 60000);
-              startDay = start.clone().startOf('day').valueOf();
-              endDay = end.clone().startOf('day').valueOf();
-              if (parsedHistory[startDay] == null) {
-                parsedHistory[startDay] = 0;
-              }
-              if (startDay === endDay) {
-                parsedHistory[startDay] += end.diff(start);
-              } else {
-                parsedHistory[startDay] += start.clone().endOf('day').diff(start);
-                if (parsedHistory[endDay] == null) {
-                  parsedHistory[endDay] = 0;
+          ];
+        }
+
+        historyChanged() {
+          return this.set('data', this.prepareData(this.history));
+        }
+
+        displayData() {
+          let keys = Object.keys(this.data);
+          keys.sort();
+          let day = moment(parseInt(keys[0]));
+          let today = moment().startOf('day');
+          let start = moment().subtract(1, this.timeRange + 's');
+          let rows = [];
+          while (true) {
+            if (day.isAfter(start)) {
+              let duration = moment.duration(this.data[day.valueOf()]);
+              rows.push([
+                day.format(this.dateFormat), {
+                  v: duration.asHours(),
+                  f: this.humanize(duration, 'meaning')
                 }
-                parsedHistory[endDay] += end.diff(end.clone().startOf('day'));
-              }
+              ]);
             }
-            return parsedHistory;
-          },
-          defaultHistory: function() {
-            return this.history = [];
-          },
-          defaultTimeRange: function() {
-            return this.timeRange = 'month';
-          },
-          select: function(e, detail) {
-            var date;
-            date = moment(this.$.googleChart.rows[detail.selection[0].row], this.dateFormat);
-            this.selectedDay = date.format(this.dateFormat);
-            return this.$.historySliders.render();
-          },
-          checkHistory: function() {
-            var i, len, newHistory, point, ref;
-            if (this.history[0][0] != null) {
-              newHistory = [];
-              ref = this.history;
-              for (i = 0, len = ref.length; i < len; i++) {
-                point = ref[i];
-                newHistory.push({
-                  s: point[0],
-                  e: point[1]
-                });
-              }
-              return this.set('history', newHistory);
+            if (!(day.add(1, 'd').valueOf() <= today)) {
+              break;
             }
-          },
-          filterSliders: function(selectedDay) {
-            var dateFormat;
-            dateFormat = this.dateFormat;
-            return function(item) {
-              if (selectedDay != null) {
-                return moment(selectedDay, dateFormat).isSame(moment(item.s * 60000), 'day');
-              } else {
-                return false;
-              }
-            };
           }
-        });
+          return this.$.googleChart.rows = rows;
+        }
+
+        prepareData(history) {
+          if (history[0][0] != null) {
+            return;
+          }
+          let start = 0;
+          let end = 0;
+          let parsedHistory = {};
+          for (let i = 0, len = history.length; i < len; i++) {
+            let point = history[i];
+            start = moment(point.s * 60000);
+            end = moment(point.e * 60000);
+            let startDay = start.clone().startOf('day').valueOf();
+            let endDay = end.clone().startOf('day').valueOf();
+            if (parsedHistory[startDay] == null) {
+              parsedHistory[startDay] = 0;
+            }
+            if (startDay === endDay) {
+              parsedHistory[startDay] += end.diff(start);
+            } else {
+              parsedHistory[startDay] += start.clone().endOf('day').diff(start);
+              if (parsedHistory[endDay] == null) {
+                parsedHistory[endDay] = 0;
+              }
+              parsedHistory[endDay] += end.diff(end.clone().startOf('day'));
+            }
+          }
+          return parsedHistory;
+        }
+
+        defaultHistory() {
+          this.history = [];
+        }
+
+        defaultTimeRange() {
+          this.timeRange = 'month';
+        }
+
+        select(e, detail) {
+          let date = moment(this.$.googleChart.rows[detail.selection[0].row], this.dateFormat);
+          this.selectedDay = date.format(this.dateFormat);
+          return this.$.historySliders.render();
+        }
+
+        checkHistory() {
+          if (this.history[0][0] != null) {
+            let newHistory = [];
+            let ref = this.history;
+            for (let i = 0, len = ref.length; i < len; i++) {
+              let point = ref[i];
+              newHistory.push({
+                s: point[0],
+                e: point[1]
+              });
+            }
+            return this.set('history', newHistory);
+          }
+        }
+
+        filterSliders(selectedDay) {
+          let dateFormat = this.dateFormat;
+          return function(item) {
+            if (selectedDay != null) {
+              return moment(selectedDay, dateFormat).isSame(moment(item.s * 60000), 'day');
+            } else {
+              return false;
+            }
+          };
+        }
+      }
+
+      customElements.define(StopwatchStats.is, StopwatchStats);
     </script>
 </dom-module>

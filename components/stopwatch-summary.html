@@ -50,15 +50,17 @@
         </div>
     </template>
     <script>
-      Polymer({
-        is: 'stopwatch-summary',
-        getTime: function(seconds) {
-          var duration, i, index, len, ref, timeString, value;
-          duration = moment.duration(seconds * 1000);
-          timeString = '';
-          ref = [duration.hours(), duration.minutes(), duration.seconds()];
-          for (index = i = 0, len = ref.length; i < len; index = ++i) {
-            value = ref[index];
+      class StopwatchSummary extends Polymer.Element {
+        static get is() {
+          return 'stopwatch-summary';
+        }
+
+        getTime(seconds) {
+          let duration = moment.duration(seconds * 1000);
+          let timeString = '';
+          let ref = [duration.hours(), duration.minutes(), duration.seconds()];
+          for (let index = 0, i = 0, len = ref.length; i < len; index = ++i) {
+            let value = ref[index];
             if (value > 0 || timeString !== '') {
               if (value < 10) {
                 timeString += '0';
@@ -71,6 +73,8 @@
           }
           return timeString;
         }
-      });
+      }
+
+      customElements.define(StopwatchSummary.is, StopwatchSummary);
     </script>
 </dom-module>
