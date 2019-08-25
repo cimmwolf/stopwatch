@@ -5,18 +5,15 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <link href="/dist/css/stopwatch.css?v=@version@" rel="stylesheet" type="text/css">
+    <link href="/style.css" rel="stylesheet" type="text/css">
     <title>Статистика</title>
-    <script src="/bower_components/webcomponentsjs/webcomponents-lite.min.js"></script>
+    <script src="/node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
 
-    <link rel="import" href="/bower_components/paper-styles/paper-styles.html">
-    <link rel="import" href="/bower_components/d-style/dstyle.module.html">
-
-    <link rel="import" href="/dist/components/stopwatch-stats.html">
+    <script type="module" src="/src/stopwatch-stats.js"></script>
 </head>
 <body>
 <div class="container-fluid">
-    <stopwatch-stats></stopwatch-stats>
+    <stopwatch-stats>загрузка...</stopwatch-stats>
 </div>
 </body>
 </html>

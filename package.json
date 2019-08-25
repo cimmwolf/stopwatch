@@ -1,7 +1,23 @@
 {
   "name": "stopwatch",
   "license": "UNLICENSED",
-  "dependencies": {},
+  "dependencies": {
+    "@google-web-components/google-chart": "^3.0.6",
+    "@polymer/iron-collapse": "^3.0.1",
+    "@polymer/iron-iconset-svg": "^3.0.1",
+    "@polymer/iron-localstorage": "^3.0.1",
+    "@polymer/neon-animation": "^3.0.1",
+    "@polymer/paper-button": "^3.0.1",
+    "@polymer/paper-card": "^3.0.1",
+    "@polymer/paper-icon-button": "^3.0.2",
+    "@polymer/paper-input": "^3.0.2",
+    "@polymer/paper-radio-button": "^3.0.1",
+    "@polymer/paper-radio-group": "^3.0.1",
+    "@polymer/polymer": "^3.3.0",
+    "@webcomponents/webcomponentsjs": "^2.2.10",
+    "gsap": "^2.1.3",
+    "moment": "^2.24.0"
+  },
   "devDependencies": {
     "autoprefixer": "^9.6.1",
     "browserslist": "^4.6.6",
@@ -45,6 +61,11 @@
       ],
       "no-var": "off",
       "require-jsdoc": "off"
+    },
+    "globals": {
+      "moment": "readonly",
+      "TweenLite": "readonly",
+      "Power2": "readonly"
     }
   }
 }
