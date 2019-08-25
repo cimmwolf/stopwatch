@@ -1,7 +1,23 @@
 {
+  "entrypoint": "index.html",
+  "shell": "src/stopwatch-app.js",
+  "fragments": [
+    "index.html"
+  ],
+  "sources": [
+    "img/**/*",
+    "src/**/*"
+  ],
   "lint": {
     "rules": [
       "polymer-3"
     ]
-  }
+  },
+  "builds": [
+    {
+      "name": "default",
+      "preset": "es6-unbundled",
+      "addPushManifest": false
+    }
+  ]
 }
