@@ -26,9 +26,8 @@
     "eslint": "^6.2.2",
     "eslint-config-google": "^0.13.0",
     "gulp": "^4.0.2",
-    "gulp-imagemin": "^4.0",
-    "gulp-postcss": "^8.0.0",
-    "imagemin-jpegoptim": "^6.0"
+    "gulp-imagemin": "^9.0.0",
+    "gulp-postcss": "^8.0.0"
   },
   "author": "Denis Beliaev <denis@vistro.ru>",
   "browserslist": [
