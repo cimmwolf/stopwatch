@@ -16,7 +16,7 @@
     "@polymer/paper-radio-group": "^3.0.1",
     "@polymer/polymer": "^3.3.0",
     "@webcomponents/webcomponentsjs": "^2.2.10",
-    "gsap": "^3.6.0",
+    "gsap": "^2.0",
     "moment": "^2.29.4"
   },
   "devDependencies": {
