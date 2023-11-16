@@ -1,23 +1,23 @@
-/* global require */
-const gulp = require('gulp');
-const autoprefixer = require('autoprefixer');
-const imagemin = require('gulp-imagemin');
-const cssNano = require('cssnano');
-const postcss = require('gulp-postcss');
+import gulp from 'gulp';
+import autoprefixer from 'autoprefixer';
+import imagemin from 'gulp-imagemin';
+import cssNano from 'cssnano';
+import postcss from 'gulp-postcss';
+import jpegoptim from 'imagemin-jpegoptim';
 
-gulp.task('css', function() {
-  gulp.src('style.css')
+function css() {
+  return gulp.src('style.css')
       .pipe(postcss([
         autoprefixer,
         cssNano({safe: true}),
       ]))
       .pipe(gulp.dest('./'));
-});
+}
 
-gulp.task('images', function() {
+function images() {
   return gulp.src('img/**/*')
       .pipe(imagemin([
-        require('imagemin-jpegoptim')({max: 88}),
+        jpegoptim({max: 88}),
       ]))
       .pipe(imagemin([
         imagemin.gifsicle(),
@@ -26,6 +26,6 @@ gulp.task('images', function() {
         imagemin.svgo(),
       ]))
       .pipe(gulp.dest('img'));
-});
+}
 
-gulp.task('publish', ['images', 'css']);
+export const publish = gulp.parallel(images, css);
